@@ -1,0 +1,14 @@
+@import "bootstrap/scss/bootstrap";
+@import "bootstrap/scss/variables";
+
+.form-control {
+  &::placeholder {
+    color: $gray-500;
+  }
+}
+
+.toast {
+  &.bg-success {
+    background-color: $gray-500;
+  }
+}
