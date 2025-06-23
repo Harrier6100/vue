@@ -1,5 +1,10 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import routes from 'virtual:generated-pages';
+
+const routes = [];
+const modules = import.meta.glob('./modules/*.js', { eager: true });
+for (const path in modules) {
+    routes.push(...modules[path].default ?? modules[path]);
+}
 
 const router = createRouter({
     history: createWebHistory(),

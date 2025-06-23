@@ -3,14 +3,14 @@ import { useConfirmStore } from '@/stores/confirm.store';
 
 export const useConfirm = () => {
     const confirmStore = useConfirmStore();
-    const { isConfirm, confirmMessage } = storeToRefs(confirmStore);
-    const { confirm, confirmYes, confirmNo } = confirmStore;
+    const { isOpen, message } = storeToRefs(confirmStore);
+    const { openConfirm, confirm, cancel } = confirmStore;
 
     return {
-        isConfirm,
-        confirmMessage,
+        isOpen,
+        message,
+        openConfirm,
         confirm,
-        confirmYes,
-        confirmNo,
+        cancel,
     };
 };

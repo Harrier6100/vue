@@ -7,6 +7,7 @@ import router from './router';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.min.css';
 import '@/assets/styles/bootstrap.scss';
+import '@/assets/styles/sort.css';
 
 const app = createApp(App);
 app.component('Toast', Toast);
