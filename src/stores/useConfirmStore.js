@@ -2,35 +2,35 @@ import { defineStore } from 'pinia';
 import { ref } from 'vue';
 
 export const useConfirmStore = defineStore('confirm', () => {
-    const isShow = ref(false);
-    const message = ref('');
+    const isOpen = ref(false);
+    const confirmMessage = ref('');
     let resolveFunction = null;
 
     const confirm = (msg) => {
-        isShow.value = true;
-        message.value = msg;
+        isOpen.value = true;
+        confirmMessage.value = msg;
         return new Promise((resolve) => {
             resolveFunction = resolve;
         });
     };
 
-    const confirmAccept = () => {
-        isShow.value = false;
+    const confirmYes = () => {
+        isOpen.value = false;
         resolveFunction?.(true);
         resolveFunction = null;
     };
 
-    const confirmCancel = () => {
-        isShow.value = false;
+    const confirmNo = () => {
+        isOpen.value = false;
         resolveFunction?.(false);
         resolveFunction = null;
     };
 
     return {
-        isShow,
-        message,
+        isOpen,
+        confirmMessage,
         confirm,
-        confirmAccept,
-        confirmCancel,
+        confirmYes,
+        confirmNo,
     };
 });

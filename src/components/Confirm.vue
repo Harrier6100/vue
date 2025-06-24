@@ -1,15 +1,15 @@
 <template>
     <teleport to="body">
-        <div v-if="isShow">
+        <div v-if="isOpen">
             <div class="modal-backdrop show"></div>
-            <div class="modal d-block show" @click.self="confirmCancel">
+            <div class="modal d-block show" @click.self="confirmNo">
                 <div class="modal-dialog">
                     <div class="modal-content">
                         <div class="modal-body">
-                            <p>{{ message }}</p>
+                            <p>{{ confirmMessage }}</p>
                             <div class="d-flex justify-content-end gap-3">
-                                <button class="btn btn-secondary" type="button" @click="confirmCancel">キャンセル</button>
-                                <button class="btn btn-primary" type="button" @click="confirmAccept">OK</button>
+                                <button class="btn btn-secondary" type="button" @click="confirmNo">キャンセル</button>
+                                <button class="btn btn-primary" type="button" @click="confirmYes">OK</button>
                             </div>
                         </div>
                     </div>
@@ -21,7 +21,7 @@
 
 <script setup>
 import { useConfirm } from '@/composables/useConfirm';
-const { isShow, message, confirmAccept, confirmCancel } = useConfirm();
+const { isOpen, confirmMessage, confirmYes, confirmNo } = useConfirm();
 </script>
 
 <style>

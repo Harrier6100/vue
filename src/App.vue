@@ -7,6 +7,5 @@
 </template>
 
 <script setup>
-import Navbar from '@/components/Navbar.vue';
-import Confirm from '@/components/Confirm.vue';
+import { Navbar, Confirm } from '@/components';
 </script>

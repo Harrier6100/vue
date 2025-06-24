@@ -1,16 +1,16 @@
 import { storeToRefs } from 'pinia';
-import { useConfirmStore } from '@/stores/confirm.store';
+import { useConfirmStore } from '@/stores/useConfirmStore';
 
 export const useConfirm = () => {
     const confirmStore = useConfirmStore();
-    const { isShow, message } = storeToRefs(confirmStore);
-    const { confirm, confirmAccept, confirmCancel } = confirmStore;
+    const { isOpen, confirmMessage } = storeToRefs(confirmStore);
+    const { confirm, confirmYes, confirmNo } = confirmStore;
 
     return {
-        isShow,
-        message,
+        isOpen,
+        confirmMessage,
         confirm,
-        confirmAccept,
-        confirmCancel,
+        confirmYes,
+        confirmNo,
     };
 };

@@ -65,16 +65,14 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { api } from '@/services/api';
 import { useLoading } from '@/composables/useLoading';
 import { useAsyncLoading } from '@/composables/useAsyncLoading';
 import { useToast } from '@/composables/useToast';
 import { useMessage } from '@/composables/useMessage';
-import Message from '@/components/Message.vue';
-import SaveButtons from '@/components/SaveButtons.vue';
-import DatePicker from '@/components/DatePicker.vue';
+import { Message, DatePicker, SaveButtons } from '@/components';
 
 const route = useRoute();
 const router = useRouter();
@@ -111,6 +109,12 @@ onMounted(async () => {
         } finally {
             stopLoading();
         }
+    }
+});
+
+watch(() => user.value.role, (newValue) => {
+    if (newValue !== 'guest') {
+        user.value.expiryDate = null;
     }
 });
 
