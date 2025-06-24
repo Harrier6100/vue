@@ -1,8 +1,8 @@
 <template>
     <div class="container-fluid">
-        <h6>アカウント</h6>
+        <h6 class="mb-3">アカウント</h6>
 
-        <div class="d-flex justify-content-between gap-3">
+        <div class="d-flex justify-content-between gap-3 mb-3">
             <input class="form-control w-25" type="text" v-model="keyword" placeholder="検索">
             <button class="btn btn-primary" type="button" @click="addUser">新規作成</button>
         </div>
@@ -12,7 +12,7 @@
                 <tr>
                     <th :class="orderBy('id')" @click="sortBy('id')">アカウント</th>
                     <th :class="orderBy('name')" @click="sortBy('name')">名前</th>
-                    <th :class="orderBy('email')" @click="sortBy('email')">名前</th>
+                    <th :class="orderBy('email')" @click="sortBy('email')">メールアドレス</th>
                     <th :class="orderBy('role')" @click="sortBy('role')">役割</th>
                     <th :class="orderBy('expiryDate')" @click="sortBy('expiryDate')">有効期限</th>
                     <th :class="orderBy('isActive')" @click="sortBy('isActive')">状態</th>
@@ -30,7 +30,7 @@
                     <td class="text-start">{{ user.email }}</td>
                     <td class="text-start">{{ user.role }}</td>
                     <td class="text-start">{{ formatDate(user.expiryDate) }}</td>
-                    <td class="text-start">{{ user.isActive }}</td>
+                    <td class="text-start">{{ user.isActive ? '有効' : '無効' }}</td>
                     <td class="text-start">{{ formatAt(user.createdAt) }}</td>
                     <td class="text-start">{{ user.createdBy }}</td>
                     <td class="text-start">{{ formatAt(user.updatedAt) }}</td>
@@ -74,7 +74,7 @@ const route = useRoute();
 const router = useRouter();
 const { isLoading, startLoading, stopLoading } = useLoading();
 const { toasts, addToast, removeToast } = useToast();
-const { openConfirm } = useConfirm();
+const { confirm } = useConfirm();
 
 const users = ref([]);
 const { keyword, filteredData } = useFilter(users);
@@ -117,8 +117,8 @@ const updateUser = (id) => {
 };
 
 const removeUser = async (id) => {
-    const isConfirm = await openConfirm('削除しますか？');
-    if (!isConfirm) return;
+    const isConfirmed = await confirm('削除しますか？');
+    if (!isConfirmed) return;
 
     try {
         startLoading();

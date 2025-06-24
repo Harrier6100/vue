@@ -8,7 +8,7 @@ export const useToast = () => {
         primary: 'bg-primary',
     };
 
-    const addToast = (message, color = 'primary', delay = 115000) => {
+    const addToast = (message, color = 'primary', delay = 5000) => {
         const id = Date.now();
         toasts.value.unshift({ id, message, color: colorMap[color] || colorMap.primary, delay });
         setTimeout(() => removeToast(id), delay);
