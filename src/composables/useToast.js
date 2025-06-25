@@ -1,22 +1,10 @@
-import { ref } from 'vue';
+import { storeToRefs } from 'pinia';
+import { useToastStore } from '@/stores/useToastStore';
 
 export const useToast = () => {
-    const toasts = ref([]);
-    const colorMap = {
-        success: 'bg-success',
-        error: 'bg-danger',
-        primary: 'bg-primary',
-    };
-
-    const addToast = (message, color = 'primary', delay = 5000) => {
-        const id = Date.now();
-        toasts.value.unshift({ id, message, color: colorMap[color] || colorMap.primary, delay });
-        setTimeout(() => removeToast(id), delay);
-    };
-
-    const removeToast = (id) => {
-        toasts.value = toasts.value.filter(toast => toast.id !== id);
-    };
+    const toastStore = useToastStore();
+    const { toasts } = storeToRefs(toastStore);
+    const { addToast, removeToast } = toastStore;
 
     return {
         toasts,

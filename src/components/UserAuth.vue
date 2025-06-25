@@ -1,34 +1,56 @@
 <template>
     <template v-if="isAuth">
-        <div class="text-white" role="button">
-            <div class="position-relative">
-                <i class="bi bi-bell"></i>
-                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"></span>
+        <div class="d-flex justify-content-end gap-3">
+
+            <div class="text-white" role="button">
+                <div class="position-relative">
+                    <i class="bi bi-bell"></i>
+                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"></span>
+                </div>
             </div>
 
             <router-link class="text-white" to="/setting">
                 <i class="bi bi-gear"></i>
             </router-link>
+
+            <div class="text-white" role="button" @click="logout">
+                <i class="bi bi-person-circle me-1"></i>{{ userName }}
+            </div>
+
         </div>
     </template>
-
     <template v-else>
-        <div class="text-white" role="button" @click="modalLogin.open">
-            <i class="bi bi-person-circle me-1"></i>ログイン
-        </div>
+        <div class="text-white" role="button" @click="modalLogin.open">ログイン</div>
     </template>
 
-    <LoginModal v-if="modalLogin.isOpen.value"
+    <LoginForm v-if="modalLogin.isOpen.value"
         :isOpen="modalLogin.isOpen.value"
         @close="modalLogin.close"
     />
 </template>
 
 <script setup>
+import { useRouter } from 'vue-router';
+import { useConfirm } from '@/composables/useConfirm';
+import { useToast } from '@/composables/useToast';
 import { useModal } from '@/composables/useModal';
 import { useAuth } from '@/composables/useAuth';
-import { LoginModal } from '@/components';
+import { useUser } from '@/composables/useUser';
+import { LoginForm } from '@/components';
 
+const router = useRouter();
+const { confirm } = useConfirm();
+const { addToast } = useToast();
 const { isAuth, authLogout } = useAuth();
+const { userName } = useUser();
 const modalLogin = useModal();
+
+const logout = async () => {
+    const isConfirmed = await confirm('ログアウトしますか？');
+    if (!isConfirmed) return;
+
+    await authLogout();
+    addToast('ログアウトしました。', 'success');
+    router.push('/');
+};
 </script>

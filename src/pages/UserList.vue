@@ -1,6 +1,6 @@
 <template>
     <div class="container-fluid">
-        <h6 class="mb-3">アカウント</h6>
+        <div class="mb-3">アカウント</div>
 
         <div class="d-flex justify-content-between gap-3 mb-3">
             <input class="form-control w-25" type="text" v-model="keyword" placeholder="検索">
@@ -10,17 +10,17 @@
         <table class="table table-hover">
             <thead>
                 <tr>
-                    <th :class="orderBy('id')" @click="sortBy('id')">アカウント</th>
-                    <th :class="orderBy('name')" @click="sortBy('name')">名前</th>
-                    <th :class="orderBy('email')" @click="sortBy('email')">メールアドレス</th>
-                    <th :class="orderBy('role')" @click="sortBy('role')">役割</th>
-                    <th :class="orderBy('expiryDate')" @click="sortBy('expiryDate')">有効期限</th>
-                    <th :class="orderBy('isActive')" @click="sortBy('isActive')">状態</th>
-                    <th :class="orderBy('createdAt')" @click="sortBy('createdAt')">作成日時</th>
-                    <th :class="orderBy('createdBy')" @click="sortBy('createdBy')">作成者</th>
-                    <th :class="orderBy('updatedAt')" @click="sortBy('updatedAt')">更新日時</th>
-                    <th :class="orderBy('updatedBy')" @click="sortBy('updatedBy')">更新者</th>
-                    <th></th>
+                    <td :class="orderBy('id')" @click="sortBy('id')" role="button">ID</td>
+                    <td :class="orderBy('name')" @click="sortBy('name')" role="button">名前</td>
+                    <td :class="orderBy('email')" @click="sortBy('email')" role="button">メールアドレス</td>
+                    <td :class="orderBy('role')" @click="sortBy('role')" role="button">役割</td>
+                    <td :class="orderBy('expiryDate')" @click="sortBy('expiryDate')" role="button">有効期限</td>
+                    <td :class="orderBy('isActive')" @click="sortBy('isActive')" role="button">状態</td>
+                    <td :class="orderBy('createdAt')" @click="sortBy('createdAt')" role="button">作成日時</td>
+                    <td :class="orderBy('createdBy')" @click="sortBy('createdBy')" role="button">作成者</td>
+                    <td :class="orderBy('updatedAt')" @click="sortBy('updatedAt')" role="button">更新日時</td>
+                    <td :class="orderBy('updatedBy')" @click="sortBy('updatedBy')" role="button">更新者</td>
+                    <td></td>
                 </tr>
             </thead>
             <tbody>
@@ -37,8 +37,8 @@
                     <td class="text-start">{{ user.updatedBy }}</td>
                     <td class="text-start">
                         <div class="d-flex justify-content-center gap-3">
-                            <button class="btn btn-link text-decoration-none p-0" type="button" @click="updateUser(user.id)">編集</button>
-                            <button class="btn btn-link text-decoration-none p-0" type="button" @click="removeUser(user.id)">削除</button>
+                            <button class="btn btn-link text-dark text-decoration-none p-0" type="button" @click="updateUser(user)">編集</button>
+                            <button class="btn btn-link text-dark text-decoration-none p-0" type="button" @click="removeUser(user)">削除</button>
                         </div>
                     </td>
                 </tr>
@@ -50,11 +50,6 @@
             :pageLength="pageLength"
         />
     </div>
-
-    <Toast v-if="toasts.length"
-        :toasts="toasts"
-        @close="removeToast"
-    />
 </template>
 
 <script setup>
@@ -68,12 +63,12 @@ import { useFilter } from '@/composables/useFilterWithQuery';
 import { useSort } from '@/composables/useSortWithQuery';
 import { usePagination } from '@/composables/usePaginationWithQuery';
 import { formatDate, formatAt } from '@/utils/formatDateTime';
-import { Pagination } from '@/components';
+import { Message, Pagination } from '@/components';
 
 const route = useRoute();
 const router = useRouter();
 const { isLoading, startLoading, stopLoading } = useLoading();
-const { toasts, addToast, removeToast } = useToast();
+const { addToast } = useToast();
 const { confirm } = useConfirm();
 
 const users = ref([]);
@@ -106,7 +101,7 @@ const addUser = () => {
     });
 };
 
-const updateUser = (id) => {
+const updateUser = ({ id }) => {
     router.push({
         name: 'UserEdit',
         params: { id },
@@ -116,7 +111,7 @@ const updateUser = (id) => {
     });
 };
 
-const removeUser = async (id) => {
+const removeUser = async ({ id }) => {
     const isConfirmed = await confirm('削除しますか？');
     if (!isConfirmed) return;
 

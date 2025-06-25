@@ -4,8 +4,9 @@
         <router-view />
     </main>
     <Confirm />
+    <Toast />
 </template>
 
 <script setup>
-import { Navbar, Confirm } from '@/components';
+import { Navbar, Confirm, Toast } from '@/components';
 </script>

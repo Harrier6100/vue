@@ -1,6 +1,6 @@
 <template>
     <input
-        ref="flatpickrRef"
+        ref="inputRef"
         :value="modelValue"
         @input="$emit('update:modelValue', $event.target.value)"
     />
@@ -20,11 +20,11 @@ const props = defineProps({
     },
 });
 const emit = defineEmits(['update:modelValue']);
-const flatpickrRef = ref(null);
-let flatpickrInstance = null;
+const inputRef = ref(null);
+let fpInstance = null;
 
 onMounted(() => {
-    flatpickrInstance = flatpickr(flatpickrRef.value, {
+    fpInstance = flatpickr(inputRef.value, {
         dateFormat: props.format,
         allowInput: true,
         locale: Japanese,
@@ -34,20 +34,20 @@ onMounted(() => {
     });
 
     if (props.modelValue) {
-        flatpickrInstance.setDate(props.modelValue, false);
+        fpInstance.setDate(props.modelValue, false);
     }
 });
 
 onUnmounted(() => {
-    if (flatpickrInstance) {
-        flatpickrInstance.destroy();
-        flatpickrInstance = null;
+    if (fpInstance) {
+        fpInstance.destroy();
+        fpInstance = null;
     }
 });
 
 watch(() => props.modelValue, (newValue) => {
-    if (flatpickrInstance) {
-        flatpickrInstance.setDate(newValue, false);
+    if (fpInstance) {
+        fpInstance.setDate(newValue, false);
     }
 });
 </script>

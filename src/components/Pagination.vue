@@ -78,8 +78,8 @@ const pages = computed(() => {
             }
         } else if (page <= 4) {
             pages.push(1, 2, 3, 4, 5, '...', pageLength);
-        } else if (page >= pageLength -3) {
-            pages.push(1, '...', pageLength - 4, pageLength - 3, pageLength - 2, pageLength - 2, pageLength);
+        } else if (page >= pageLength - 3) {
+            pages.push(1, '...', pageLength - 4, pageLength - 3, pageLength - 2, pageLength - 1, pageLength);
         } else {
             pages.push(1, '...', page - 1, page, page + 1, '...', pageLength);
         }

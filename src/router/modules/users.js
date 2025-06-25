@@ -2,7 +2,7 @@ export default [
     {
         path: '/users',
         name: 'UserList',
-        component: () => import('@/views/UserList.vue'),
+        component: () => import('@/pages/UserList.vue'),
         meta: {
             requiresAuth: true,
         },
@@ -10,7 +10,7 @@ export default [
     {
         path: '/users/add',
         name: 'UserAdd',
-        component: () => import('@/views/UserEdit.vue'),
+        component: () => import('@/pages/UserEdit.vue'),
         meta: {
             requiresAuth: true,
         },
@@ -18,7 +18,7 @@ export default [
     {
         path: '/users/:id',
         name: 'UserEdit',
-        component: () => import('@/views/UserEdit.vue'),
+        component: () => import('@/pages/UserEdit.vue'),
         meta: {
             requiresAuth: true,
         },

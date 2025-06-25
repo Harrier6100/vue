@@ -1,7 +1,7 @@
 <template>
     <div class="d-flex justify-content-end gap-3">
-        <button class="btn btn-secondary" type="button" @click="cancel" :disabled="isLoading || isAsyncLoading">キャンセル</button>
-        <button class="btn btn-primary" type="submit" :disabled="isLoading || isAsyncLoading">
+        <button class="btn btn-secondary" type="button" @click="cancel" :disabled="isLoading">キャンセル</button>
+        <button class="btn btn-primary" type="submit" :disabled="isLoading">
             <span v-if="isAsyncLoading" class="spinner-border spinner-border-sm me-1" role="status"></span>保存
         </button>
     </div>

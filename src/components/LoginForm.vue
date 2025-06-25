@@ -7,9 +7,10 @@
                     <div class="modal-content">
                         <div class="modal-body">
                             <form @submit.prevent="login" autocomplete="off">
+                                <Message class="mb-3" :error="errorMessage.error" />
 
                                 <div class="mb-3">
-                                    <label class="form-label" for="id">アカウント</label>
+                                    <label class="form-label" for="id">ログインID</label>
                                     <input class="form-control" type="text" id="id" v-model="credentials.id">
                                     <Message :error="errorMessage.id" />
                                 </div>
@@ -21,10 +22,10 @@
                                 </div>
 
                                 <div class="d-grid">
-                                    <button class="btn btn-primary" type="submit" :disabled="isLoading">ログイン</button>
+                                    <button class="btn btn-primary" type="submit" :disabled="isLoading">
+                                        <span v-if="isAsyncLoading" class="spinner-border spinner-border-sm me-1" role="status"></span>ログイン
+                                    </button>
                                 </div>
-
-                                <Message :error="errorMessage.error" />
                             </form>
                         </div>
                     </div>
@@ -38,6 +39,7 @@
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { useLoading } from '@/composables/useLoading';
+import { useAsyncLoading } from '@/composables/useAsyncLoading';
 import { useMessage } from '@/composables/useMessage';
 import { useAuth } from '@/composables/useAuth';
 import { Message } from '@/components';
@@ -48,9 +50,9 @@ const props = defineProps({
 const emit = defineEmits(['close']);
 const router = useRouter();
 const { isLoading, startLoading, stopLoading } = useLoading();
+const { isAsyncLoading, execute } = useAsyncLoading();
 const { errorMessage } = useMessage();
 const { authLogin } = useAuth();
-const isError = ref(false);
 
 const credentialsRestore = () => ({
     id: '',
@@ -63,7 +65,7 @@ const validate = () => {
 
     errorMessage.value.id = '';
     if (!credentials.value.id) {
-        errorMessage.value.id = 'アカウントを入力してください。';
+        errorMessage.value.id = 'ログインIDを入力してください。';
         isValid = false;
     }
 
@@ -77,11 +79,13 @@ const validate = () => {
 };
 
 const login = async () => {
-    if (isError.value || !validate()) return;
+    if (!validate()) return;
 
     try {
         startLoading();
-        await authLogin(credentials.value);
+        await execute(async () => {
+            await authLogin(credentials.value);
+        });
         emit('close');
         const redirectTo = sessionStorage.getItem('redirectTo');
         if (redirectTo) {

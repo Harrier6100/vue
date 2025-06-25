@@ -1,9 +1,10 @@
 export { default as Confirm } from './Confirm.vue';
 export { default as DatePicker } from './DatePicker.vue';
-export { default as LoginModal } from './LoginModal.vue';
+export { default as LoginForm } from './LoginForm.vue';
 export { default as Message } from './Message.vue';
 export { default as Navbar } from './Navbar.vue';
 export { default as Pagination } from './Pagination.vue';
+export { default as ProductCodeInput } from './ProductCodeInput.vue';
 export { default as SaveButtons } from './SaveButtons.vue';
 export { default as Toast } from './Toast.vue';
 export { default as UserAuth } from './UserAuth.vue';

@@ -1,11 +1,11 @@
 <template>
     <div class="container-fluid">
-        <h6 class="mb-3">アカウント</h6>
+        <div class="mb-3">アカウント</div>
 
         <form @submit.prevent="save" autocomplete="off">
             <div class="mb-3">
-                <label class="form-label" for="id">アカウント</label>
-                <input class="form-control" type="text" id="id" v-model="user.id">
+                <label class="form-label" for="id">ID</label>
+                <input class="form-control" type="text" id="id" v-model="user.id" :readonly="!!id">
                 <Message :error="errorMessage.id" />
             </div>
 
@@ -57,11 +57,6 @@
             />
         </form>
     </div>
-
-    <Toast v-if="toasts.length"
-        :toasts="toasts"
-        @close="removeToast"
-    />
 </template>
 
 <script setup>
@@ -72,15 +67,14 @@ import { useLoading } from '@/composables/useLoading';
 import { useAsyncLoading } from '@/composables/useAsyncLoading';
 import { useToast } from '@/composables/useToast';
 import { useMessage } from '@/composables/useMessage';
-import { Message, DatePicker, SaveButtons } from '@/components';
+import { Message, SaveButtons, DatePicker } from '@/components';
 
 const route = useRoute();
 const router = useRouter();
 const { isLoading, startLoading, stopLoading } = useLoading();
-const { toasts, addToast, removeToast } = useToast();
+const { addToast } = useToast();
 const { isAsyncLoading, execute } = useAsyncLoading();
 const { errorMessage } = useMessage();
-const isError = ref(false);
 
 const { id } = route.params;
 const userRestore = () => ({
@@ -114,7 +108,7 @@ onMounted(async () => {
 
 watch(() => user.value.role, (newValue) => {
     if (newValue !== 'guest') {
-        user.value.expiryDate = null;
+        user.value.expiryDate = '';
     }
 });
 
@@ -123,19 +117,19 @@ const validate = () => {
 
     errorMessage.value.id = '';
     if (!user.value.id) {
-        errorMessage.value.id = 'アカウントは必須です。';
+        errorMessage.value.id = 'IDを入力してください。';
         isValid = false;
     }
 
     errorMessage.value.name = '';
     if (!user.value.name) {
-        errorMessage.value.name = '名前は必須です。';
+        errorMessage.value.name = '名前を入力してください。';
         isValid = false;
     }
 
     errorMessage.value.expiryDate = '';
     if (user.value.role === 'guest' && !user.value.expiryDate) {
-        errorMessage.value.expiryDate = 'ゲストアカウントは有効期限が必須です。';
+        errorMessage.value.expiryDate = '有効期限を設定してください。';
         isValid = false;
     }
 
@@ -143,7 +137,7 @@ const validate = () => {
 };
 
 const save = async () => {
-    if (isError.value || !validate()) {
+    if (!validate()) {
         addToast('入力内容に誤りがあります。', 'error');
         return;
     }
@@ -153,14 +147,14 @@ const save = async () => {
         if (id) {
             await execute(async () => {
                 await api.put(`/api/users/${id}`, user.value);
-                addToast('保存しました。', 'success');
             });
+            addToast('保存しました。', 'success');
         } else {
             await execute(async () => {
                 await api.post(`/api/users`, user.value);
-                addToast('保存しました。', 'success');
-                user.value = userRestore();
             });
+            addToast('保存しました。', 'success');
+            user.value = userRestore();
         }
     } catch (error) {
         addToast(error.message, 'error');
@@ -170,7 +164,7 @@ const save = async () => {
 };
 
 const cancel = () => {
-    const { routeQuery } = window.history.state;
+    const { routeQuery } = window.history.state || {};
     router.push({
         name: 'UserList',
         query: routeQuery,

@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router';
+import { useAuth } from '@/composables/useAuth';
 
 const routes = [];
 const modules = import.meta.glob('./modules/*.js', { eager: true });
@@ -12,6 +13,16 @@ const router = createRouter({
 });
 
 router.beforeEach(async (to, from, next) => {
+    const { isAuth, authAutoLogin } = useAuth();
+
+    if (!isAuth.value) {
+        try {
+            await authAutoLogin();
+        } catch (error) {
+            return next('/auth/error');
+        }
+    }
+
     next();
 });
 
