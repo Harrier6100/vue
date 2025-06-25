@@ -1,14 +1,14 @@
 <template>
     <div class="position-relative">
         <input class="form-control" type="text" v-model="inputValue" @change="change">
-        <a class="position-absolute top-50 end-0 translate-middle-y pe-3" role="button" @click="productCodeSelector.open">
+        <a class="position-absolute top-50 end-0 translate-middle-y pe-3" role="button" @click="propertyCodeSelector.open">
             <i class="bi bi-search"></i>
         </a>
     </div>
-    <ProductCodeSelector
-        :isOpen="productCodeSelector.isOpen.value"
+    <PropertyCodeSelector
+        :isOpen="propertyCodeSelector.isOpen.value"
         @select="select"
-        @close="productCodeSelector.close"
+        @close="propertyCodeSelector.close"
     />
 </template>
 
@@ -17,14 +17,14 @@ import { ref, watch } from 'vue';
 import { api } from '@/services/api';
 import { useLoading } from '@/composables/useLoading';
 import { useModal } from '@/composables/useModal';
-import { ProductCodeSelector } from '@/components';
+import { PropertyCodeSelector } from '@/components';
 
 const props = defineProps({
     modelValue: String,
 });
 const emit = defineEmits(['update:modelValue', 'change', 'error', 'errorMessage']);
 const { isLoading, startLoading, stopLoading } = useLoading();
-const productCodeSelector = useModal();
+const propertyCodeSelector = useModal();
 const inputValue = ref(props.modelValue);
 
 watch(() => props.modelValue, (value) => {
@@ -36,8 +36,8 @@ watch(inputValue, (value) => {
 });
 
 const select = (selected) => {
-    const { productCode } = selected;
-    inputValue.value = productCode;
+    const { code } = selected;
+    inputValue.value = code;
     emit('change', selected);
     emit('error', false);
     emit('errorMessage', '');
@@ -51,7 +51,7 @@ const change = async () => {
 
     try {
         startLoading();
-        const response = await api.get(`/api/product/names/${inputValue.value}`);
+        const response = await api.get(`/api/physprop/names/${inputValue.value}`);
         emit('change', response.data);
         emit('error', false);
         emit('errorMessage', '');

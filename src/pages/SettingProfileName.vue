@@ -5,20 +5,24 @@
                 <i class="bi bi-arrow-left me-1"></i>プロフィール
             </router-link>
         </div>
-
-        <form @submit.prevent="save" autocomplete="off">
-            <div class="mb-3">
-                <label class="form-label" for="name">名前</label>
-                <input class="form-control" type="text" id="name" v-model="setting.name">
-                <Message :error="errorMessage.name" />
+        <div class="row justify-content-center">
+            <div class="col-12 col-sm-10 col-md-8 col-lg-6 col-xl-4">
+                
+                <form @submit.prevent="save" autocomplete="off">
+                    <div class="mb-3">
+                        <label class="form-label" for="name">名前</label>
+                        <input class="form-control" type="text" id="name" v-model="setting.name">
+                        <Message :error="errorMessage.name" />
+                    </div>
+                    
+                    <div class="d-grid">
+                        <button class="btn btn-primary" type="submit" :disabled="isLoading || isChange">
+                            <span v-if="isAsyncLoading" class="spinner-border spinner-border-sm me-1" role="status"></span>保存
+                        </button>
+                    </div>
+                </form>
             </div>
-
-            <div class="d-flex justify-content-end">
-                <button class="btn btn-primary" type="submit" :disabled="isLoading || isChange">
-                    <span v-if="isAsyncLoading" class="spinner-border spinner-border-sm me-1" role="status"></span>保存
-                </button>
-            </div>
-        </form>
+        </div>
     </div>
 </template>
 

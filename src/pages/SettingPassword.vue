@@ -5,26 +5,30 @@
                 <i class="bi bi-arrow-left me-1"></i>設定
             </router-link>
         </div>
-
-        <form @submit.prevent="save" autocomplete="off">
-            <div class="mb-3">
-                <label class="form-label" for="password">パスワード</label>
-                <input class="form-control" type="password" id="password" v-model="setting.password">
-                <Message :error="errorMessage.password" />
+        <div class="row justify-content-center">
+            <div class="col-12 col-sm-10 col-md-8 col-lg-6 col-xl-4">
+                
+                <form @submit.prevent="save" autocomplete="off">
+                    <div class="mb-3">
+                        <label class="form-label" for="password">新しいパスワード</label>
+                        <input class="form-control" type="password" id="password" v-model="setting.password">
+                        <Message :error="errorMessage.password" />
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label" for="passwordConfirm">新しいパスワード確認</label>
+                        <input class="form-control" type="password" id="passwordConfirm" v-model="setting.passwordConfirm">
+                        <Message :error="errorMessage.passwordConfirm" />
+                    </div>
+                    
+                    <div class="d-grid">
+                        <button class="btn btn-primary" type="submit" :disabled="isLoading">
+                            <span v-if="isAsyncLoading" class="spinner-border spinner-border-sm me-1" role="status"></span>保存
+                        </button>
+                    </div>
+                </form>
             </div>
-
-            <div class="mb-3">
-                <label class="form-label" for="passwordConfirm">パスワード（再入力）</label>
-                <input class="form-control" type="password" id="passwordConfirm" v-model="setting.passwordConfirm">
-                <Message :error="errorMessage.passwordConfirm" />
-            </div>
-
-            <div class="d-flex justify-content-end">
-                <button class="btn btn-primary" type="submit" :disabled="isLoading">
-                    <span v-if="isAsyncLoading" class="spinner-border spinner-border-sm me-1" role="status"></span>保存
-                </button>
-            </div>
-        </form>
+        </div>
     </div>
 </template>
 
@@ -53,16 +57,16 @@ const validate = () => {
 
     errorMessage.value.password = '';
     if (!setting.value.password) {
-        errorMessage.value.password = 'パスワードを入力してください。';
+        errorMessage.value.password = '新しいパスワードを入力してください。';
         isValid = false;
     }
 
     errorMessage.value.passwordConfirm = '';
     if (!setting.value.passwordConfirm) {
-        errorMessage.value.passwordConfirm = 'パスワード（再入力）を入力してください。';
+        errorMessage.value.passwordConfirm = '新しいパスワードを入力してください。';
         isValid = false;
     } else if (setting.value.password !== setting.value.passwordConfirm) {
-        errorMessage.value.passwordConfirm = 'パスワードとパスワード（再入力）が一致しません。';
+        errorMessage.value.passwordConfirm = '新しいパスワードが一致しません。';
         isValid = false;
     }
 
