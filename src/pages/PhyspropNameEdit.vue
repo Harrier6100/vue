@@ -3,6 +3,7 @@
         <div class="mb-3">物性名</div>
 
         <form @submit.prevent="save" autocomplete="off">
+
             <div class="mb-3">
                 <label class="form-label" for="code">物性コード</label>
                 <div class="d-flex d-flex-row gap-2">
@@ -57,6 +58,7 @@
                 :isAsyncLoading="isAsyncLoading"
                 @cancel="cancel"
             />
+            
         </form>
     </div>
 </template>
@@ -74,8 +76,8 @@ import { Message, SaveButtons } from '@/components';
 const route = useRoute();
 const router = useRouter();
 const { isLoading, startLoading, stopLoading } = useLoading();
-const { addToast } = useToast();
 const { isAsyncLoading, execute } = useAsyncLoading();
+const { addToast } = useToast();
 const { errorMessage } = useMessage();
 
 const { code } = route.params;

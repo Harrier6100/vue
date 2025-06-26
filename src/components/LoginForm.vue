@@ -6,21 +6,18 @@
                 <div class="modal-dialog">
                     <div class="modal-content">
                         <div class="modal-body">
+                            <Message class="mb-3" :error="errorMessage.error" />
                             <form @submit.prevent="login" autocomplete="off">
-                                <Message class="mb-3" :error="errorMessage.error" />
-
                                 <div class="mb-3">
                                     <label class="form-label" for="id">ログインID</label>
                                     <input class="form-control" type="text" id="id" v-model="credentials.id">
                                     <Message :error="errorMessage.id" />
                                 </div>
-
                                 <div class="mb-3">
                                     <label class="form-label" for="password">パスワード</label>
                                     <input class="form-control" type="password" id="password" v-model="credentials.password">
                                     <Message :error="errorMessage.password" />
                                 </div>
-
                                 <div class="d-grid">
                                     <button class="btn btn-primary" type="submit" :disabled="isLoading">
                                         <span v-if="isAsyncLoading" class="spinner-border spinner-border-sm me-1" role="status"></span>ログイン

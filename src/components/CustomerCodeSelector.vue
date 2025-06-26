@@ -10,18 +10,15 @@
                         </div>
                         <div class="modal-body">
                             <Message class="mb-3" :error="errorMessage.error" />
-
                             <div class="row">
                                 <div class="col-3">
                                     <form @submit.prevent="search" autocomplete="off">
                                         <div class="mb-3">
                                             <input class="form-control" type="text" v-model="form.customerCode" placeholder="得意先コード">
                                         </div>
-
                                         <div class="mb-3">
                                             <input class="form-control" type="text" v-model="form.customerName" placeholder="得意先名">
                                         </div>
-
                                         <div class="d-grid">
                                             <button class="btn btn-primary" :disabled="isLoading">
                                                 <span v-if="isLoading" class="spinner-border spinner-border-sm me-1"></span>検索

@@ -10,29 +10,24 @@
                         </div>
                         <div class="modal-body">
                             <Message class="mb-3" :error="errorMessage.error" />
-
                             <div class="row">
                                 <div class="col-3">
                                     <form @submit.prevent="search" autocomplete="off">
                                         <div class="mb-3">
                                             <input class="form-control" type="text" v-model="form.lot" placeholder="ロット">
                                         </div>
-
                                         <div class="mb-3">
                                             <input class="form-control" type="text" v-model="form.code" placeholder="品名コード">
                                         </div>
-
                                         <div class="mb-3">
                                             <input class="form-control" type="text" v-model="form.name" placeholder="品名">
                                         </div>
-
                                         <div class="mb-3">
                                             <div class="form-check">
                                                 <input class="form-check-input" type="checkbox" id="isIncludeOutOfStock" v-model="form.isIncludeOutOfStock">
                                                 <label class="form-check-label" for="isIncludeOutOfStock">残在庫なしを含む</label>
                                             </div>
                                         </div>
-
                                         <div class="d-grid">
                                             <button class="btn btn-primary" :disabled="isLoading">
                                                 <span v-if="isLoading" class="spinner-border spinner-border-sm me-1"></span>検索

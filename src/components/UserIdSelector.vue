@@ -10,12 +10,9 @@
                         </div>
                         <div class="modal-body">
                             <Message class="mb-3" :error="errorMessage.error" />
-
                             <div class="row">
                                 <div class="col-3">
-                                    <div class="mb-3">
-                                        <input class="form-control" type="text" v-model="keyword" placeholder="検索">
-                                    </div>
+                                    <input class="form-control" type="text" v-model="keyword" placeholder="検索">
                                 </div>
                                 <div class="col-9">
                                     <table class="table table-bordered table-hover">

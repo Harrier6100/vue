@@ -13,8 +13,8 @@
                                 id="productCode"
                                 v-model="physpropSpec.productCode"
                                 @change="productCodeSelect"
-                                @error="isError = $event"
                                 @errorMessage="errorMessage.productCode = $event"
+                                @error="isError = $event"
                                 :readonly="!!productCode"
                             />
                             <Message :error="errorMessage.productCode" />
@@ -34,8 +34,8 @@
                                 id="customerCode"
                                 v-model="physpropSpec.customerCode"
                                 @change="customerCodeSelect"
-                                @error="isError = $event"
                                 @errorMessage="errorMessage.customerCode = $event"
+                                @error="isError = $event"
                                 :readonly="!!productCode"
                             />
                             <Message :error="errorMessage.customerCode" />
@@ -45,7 +45,7 @@
                             <label class="form-label" for="customerName">得意先名</label>
                             <input class="form-control" type="text" id="customerName" v-model="physpropSpec.customerName" readonly>
                         </div>
-
+                        
                     </div>
                 </div>
             </div>
@@ -74,8 +74,8 @@
                             <PropertyCodeInput
                                 v-model="spec.propertyCode"
                                 @change="propertyCodeSelect(index, $event)"
-                                @error="isError = $event"
                                 @errorMessage="spec.errorMessage = $event"
+                                @error="isError = $event"
                             />
                             <Message :error="spec.errorMessage" />
                         </td>
@@ -153,8 +153,8 @@ import { Message, SaveButtons, ProductCodeInput, CustomerCodeInput, PropertyCode
 const route = useRoute();
 const router = useRouter();
 const { isLoading, startLoading, stopLoading } = useLoading();
-const { addToast } = useToast();
 const { isAsyncLoading, execute } = useAsyncLoading();
+const { addToast } = useToast();
 const { errorMessage } = useMessage();
 const isError = ref(false);
 

@@ -3,6 +3,7 @@
         <div class="mb-3">アカウント</div>
 
         <form @submit.prevent="save" autocomplete="off">
+
             <div class="mb-3">
                 <label class="form-label" for="id">ID</label>
                 <input class="form-control" type="text" id="id" v-model="user.id" :readonly="!!id">
@@ -18,15 +19,15 @@
             <div class="mb-3">
                 <label class="form-label" for="role">役割</label>
                 <div class="form-check">
-                    <input class="form-check-input" type="radio" id="admin" value="admin" v-model="user.role">
+                    <input class="form-check-input" type="radio" value="admin" v-model="user.role">
                     <label class="form-check-label" for="admin">Admin</label>
                 </div>
                 <div class="form-check">
-                    <input class="form-check-input" type="radio" id="user" value="user" v-model="user.role">
+                    <input class="form-check-input" type="radio" value="user" v-model="user.role">
                     <label class="form-check-label" for="user">User</label>
                 </div>
                 <div class="form-check">
-                    <input class="form-check-input" type="radio" id="guest" value="guest" v-model="user.role">
+                    <input class="form-check-input" type="radio" value="guest" v-model="user.role">
                     <label class="form-check-label" for="guest">Guest</label>
                 </div>
             </div>
@@ -43,7 +44,6 @@
             </div>
 
             <div class="mb-3">
-                <label class="form-label" for="isActive">状態</label>
                 <div class="form-check form-switch">
                     <input class="form-check-input" type="checkbox" id="isActive" v-model="user.isActive">
                     <label class="form-check-label" for="isActive">{{ user.isActive ? '有効' : '無効' }}</label>
@@ -55,6 +55,7 @@
                 :isAsyncLoading="isAsyncLoading"
                 @cancel="cancel"
             />
+            
         </form>
     </div>
 </template>
@@ -67,13 +68,13 @@ import { useLoading } from '@/composables/useLoading';
 import { useAsyncLoading } from '@/composables/useAsyncLoading';
 import { useToast } from '@/composables/useToast';
 import { useMessage } from '@/composables/useMessage';
-import { Message, DatePicker, SaveButtons } from '@/components';
+import { Message, SaveButtons, DatePicker } from '@/components';
 
 const route = useRoute();
 const router = useRouter();
 const { isLoading, startLoading, stopLoading } = useLoading();
-const { addToast } = useToast();
 const { isAsyncLoading, execute } = useAsyncLoading();
+const { addToast } = useToast();
 const { errorMessage } = useMessage();
 
 const { id } = route.params;

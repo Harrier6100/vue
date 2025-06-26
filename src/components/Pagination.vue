@@ -8,7 +8,6 @@
         >
             <i class="bi bi-chevron-left"></i>
         </button>
-
         <template v-for="page in pages" :key="page">
             <button v-if="page === '...'"
                 class="btn btn-link text-decoration-none"
@@ -27,7 +26,6 @@
                 {{ page }}
             </button>
         </template>
-
         <button
             class="btn btn-link text-decoration-none"
             type="button"

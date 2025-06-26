@@ -3,18 +3,19 @@
         <div class="mb-3">物性規格</div>
 
         <form @submit.prevent="save" autocomplete="off">
+
             <div class="mb-3">
                 <div class="row">
                     <div class="col">
-
+                        
                         <div class="mb-3">
                             <label class="form-label" for="productLot">ロット</label>
                             <StockLotInput
                                 id="productLot"
                                 v-model="physpropValue.productLot"
                                 @change="productLotSelect"
-                                @error="isError = $event"
                                 @errorMessage="errorMessage.productLot = $event"
+                                @error="isError = $event"
                                 :readonly="!!productLot"
                             />
                             <Message :error="errorMessage.productLot" />
@@ -39,8 +40,8 @@
                                 id="customerCode"
                                 v-model="physpropValue.customerCode"
                                 @change="customerCodeSelect"
-                                @error="isError = $event"
                                 @errorMessage="errorMessage.customerCode = $event"
+                                @error="isError = $event"
                                 :readonly="!!productLot"
                             />
                             <Message :error="errorMessage.customerCode" />
@@ -78,8 +79,8 @@
                                     <UserIdInput
                                         v-model="propertyItem.measurerId"
                                         @change="measurerIdSelect(index, $event)"
-                                        @error="isError = $event"
                                         @errorMessage="propertyItem.errorMessage = $event"
+                                        @error="isError = $event"
                                     />
                                     <Message :error="propertyItem.errorMessage" />
                                 </td>
@@ -118,8 +119,8 @@
                             <PropertyCodeInput
                                 v-model="spec.propertyCode"
                                 @change="propertyCodeSelect(index, $event)"
-                                @error="isError = $event"
                                 @errorMessage="spec.errorMessage = $event"
+                                @error="isError = $event"
                             />
                             <Message :error="spec.errorMessage" />
                         </td>
@@ -179,6 +180,7 @@
                 :isAsyncLoading="isAsyncLoading"
                 @cancel="cancel"
             />
+
         </form>
     </div>
 </template>
@@ -192,13 +194,13 @@ import { useAsyncLoading } from '@/composables/useAsyncLoading';
 import { useToast } from '@/composables/useToast';
 import { useMessage } from '@/composables/useMessage';
 import { useArray } from '@/composables/useArray';
-import { Message, DatePicker, SaveButtons, UserIdInput, StockLotInput, ProductCodeInput, CustomerCodeInput, PropertyCodeInput } from '@/components';
+import { Message, SaveButtons, DatePicker, UserIdInput, StockLotInput, ProductCodeInput, CustomerCodeInput, PropertyCodeInput } from '@/components';
 
 const route = useRoute();
 const router = useRouter();
 const { isLoading, startLoading, stopLoading } = useLoading();
-const { addToast } = useToast();
 const { isAsyncLoading, execute } = useAsyncLoading();
+const { addToast } = useToast();
 const { errorMessage } = useMessage();
 const isError = ref(false);
 

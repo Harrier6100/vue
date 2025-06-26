@@ -5,6 +5,7 @@
             <i class="bi bi-search"></i>
         </a>
     </div>
+    
     <CustomerCodeSelector
         :isOpen="customerCodeSelector.isOpen.value"
         @select="select"
@@ -26,7 +27,7 @@ const attrs = useAttrs();
 const props = defineProps({
     modelValue: String,
 });
-const emit = defineEmits(['update:modelValue', 'change', 'error', 'errorMessage']);
+const emit = defineEmits(['update:modelValue', 'change', 'errorMessage', 'error']);
 const { isLoading, startLoading, stopLoading } = useLoading();
 const customerCodeSelector = useModal();
 const inputValue = ref(props.modelValue);
@@ -43,26 +44,26 @@ const select = (selected) => {
     const { customerCode } = selected;
     inputValue.value = customerCode;
     emit('change', selected);
-    emit('error', false);
     emit('errorMessage', '');
+    emit('error', false);
 };
 
 const change = async () => {
     emit('change', {});
-    emit('error', false);
     emit('errorMessage', '');
+    emit('error', false);
     if (!inputValue.value) return;
 
     try {
         startLoading();
         const response = await api.get(`/api/customer/names/${inputValue.value}`);
         emit('change', response.data);
-        emit('error', false);
         emit('errorMessage', '');
+        emit('error', false);
     } catch (error) {
         emit('change', {});
-        emit('error', true);
         emit('errorMessage', error.message);
+        emit('error', true);
     } finally {
         stopLoading();
     }

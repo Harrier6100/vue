@@ -7,8 +7,8 @@
         </div>
         <div class="row justify-content-center">
             <div class="col-12 col-sm-10 col-md-8 col-lg-6 col-xl-4">
-                
                 <form @submit.prevent="save" autocomplete="off">
+
                     <div class="mb-3">
                         <label class="form-label" for="email">メールアドレス</label>
                         <input class="form-control" type="text" id="email" v-model="setting.email">
@@ -20,6 +20,7 @@
                             <span v-if="isAsyncLoading" class="spinner-border spinner-border-sm me-1" role="status"></span>保存
                         </button>
                     </div>
+                    
                 </form>
             </div>
         </div>

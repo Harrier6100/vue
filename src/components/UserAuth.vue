@@ -1,31 +1,27 @@
 <template>
     <template v-if="isAuth">
         <div class="d-flex justify-content-end gap-3">
-
             <div class="text-white" role="button">
                 <div class="position-relative">
                     <i class="bi bi-bell"></i>
                     <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"></span>
                 </div>
             </div>
-
             <router-link class="text-white" to="/setting">
                 <i class="bi bi-gear"></i>
             </router-link>
-
             <div class="text-white" role="button" @click="logout">
                 <i class="bi bi-person-circle me-1"></i>{{ userName }}
             </div>
-
         </div>
     </template>
     <template v-else>
-        <div class="text-white" role="button" @click="modalLogin.open">ログイン</div>
+        <div class="text-white" role="button" @click="loginForm.open">ログイン</div>
     </template>
-
-    <LoginForm v-if="modalLogin.isOpen.value"
-        :isOpen="modalLogin.isOpen.value"
-        @close="modalLogin.close"
+    
+    <LoginForm v-if="loginForm.isOpen.value"
+        :isOpen="loginForm.isOpen.value"
+        @close="loginForm.close"
     />
 </template>
 
@@ -43,7 +39,7 @@ const { confirm } = useConfirm();
 const { addToast } = useToast();
 const { isAuth, authLogout } = useAuth();
 const { userName } = useUser();
-const modalLogin = useModal();
+const loginForm = useModal();
 
 const logout = async () => {
     const isConfirmed = await confirm('ログアウトしますか？');

@@ -1,5 +1,10 @@
 <template>
-    <div v-if="isShow" class="form-text" :class="color">{{ message }}</div>
+    <div v-if="isShow"
+        class="form-text"
+        :class="color"
+    >
+        {{ message }}
+    </div>
 </template>
 
 <script setup>
