@@ -8,21 +8,26 @@
                     <div class="col">
 
                         <div class="mb-3">
-                            <label class="form-label" for="productCode">品名コード</label>
-                            <ProductCodeInput
-                                id="productCode"
-                                v-model="physpropSpec.productCode"
-                                @change="productCodeSelect"
+                            <label class="form-label" for="productLot">ロット</label>
+                            <StockLotInput
+                                id="productLot"
+                                v-model="physpropValue.productLot"
+                                @change="productLotSelect"
                                 @error="isError = $event"
-                                @errorMessage="errorMessage.productCode = $event"
-                                :readonly="!!productCode"
+                                @errorMessage="errorMessage.productLot = $event"
+                                :readonly="!!productLot"
                             />
-                            <Message :error="errorMessage.productCode" />
+                            <Message :error="errorMessage.productLot" />
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label" for="productCode">品名</label>
+                            <input class="form-control" type="text" id="productCode" v-model="physpropValue.productCode" readonly>
                         </div>
 
                         <div class="mb-3">
                             <label class="form-label" for="productName">品名</label>
-                            <input class="form-control" type="text" id="productName" v-model="physpropSpec.productName" readonly>
+                            <input class="form-control" type="text" id="productName" v-model="physpropValue.productName" readonly>
                         </div>
 
                     </div>
@@ -32,21 +37,60 @@
                             <label class="form-label" for="customerCode">得意先コード</label>
                             <CustomerCodeInput
                                 id="customerCode"
-                                v-model="physpropSpec.customerCode"
+                                v-model="physpropValue.customerCode"
                                 @change="customerCodeSelect"
                                 @error="isError = $event"
                                 @errorMessage="errorMessage.customerCode = $event"
-                                :readonly="!!productCode"
+                                :readonly="!!productLot"
                             />
                             <Message :error="errorMessage.customerCode" />
                         </div>
 
                         <div class="mb-3">
                             <label class="form-label" for="customerName">得意先名</label>
-                            <input class="form-control" type="text" id="customerName" v-model="physpropSpec.customerName" readonly>
+                            <input class="form-control" type="text" id="customerName" v-model="physpropValue.customerName" readonly>
                         </div>
 
                     </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-9">
+                    <table class="table table-bordered">
+                        <thead class="table-secondary">
+                            <tr>
+                                <td>物性コード</td>
+                                <td>物性名</td>
+                                <td>測定日</td>
+                                <td>測定者</td>
+                                <td>測定者名</td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="(propertyItem, index) in physpropValue.propertyItems" :key="index">
+                                <td>{{ propertyItem.propertyCode }}</td>
+                                <td>{{ propertyItem.propertyName }}</td>
+                                <td>
+                                    <DatePicker class="form-control" v-model="propertyItem.measuredDate" placeholder="YYYY-MM-DD" />
+                                </td>
+                                <td>
+                                    <UserIdInput
+                                        v-model="propertyItem.measurerId"
+                                        @change="measurerIdSelect(index, $event)"
+                                        @error="isError = $event"
+                                        @errorMessage="propertyItem.errorMessage = $event"
+                                    />
+                                    <Message :error="propertyItem.errorMessage" />
+                                </td>
+                                <td>
+                                    <input class="form-control" type="text" v-model="propertyItem.measurerName" readonly>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="col-3">
                 </div>
             </div>
 
@@ -69,7 +113,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="(spec, index) in physpropSpec.specs" :key="index">
+                    <tr v-for="(spec, index) in physpropValue.specs" :key="index">
                         <td class="align-middle" style="width: 12%">
                             <PropertyCodeInput
                                 v-model="spec.propertyCode"
@@ -127,7 +171,7 @@
 
             <div class="mb-3">
                 <label class="form-label" for="remarks">備考</label>
-                <textarea class="form-control" id="remarks" v-model="physpropSpec.remarks"></textarea>
+                <textarea class="form-control" id="remarks" v-model="physpropValue.remarks"></textarea>
             </div>
 
             <SaveButtons
@@ -148,7 +192,7 @@ import { useAsyncLoading } from '@/composables/useAsyncLoading';
 import { useToast } from '@/composables/useToast';
 import { useMessage } from '@/composables/useMessage';
 import { useArray } from '@/composables/useArray';
-import { Message, SaveButtons, ProductCodeInput, CustomerCodeInput, PropertyCodeInput } from '@/components';
+import { Message, DatePicker, SaveButtons, UserIdInput, StockLotInput, ProductCodeInput, CustomerCodeInput, PropertyCodeInput } from '@/components';
 
 const route = useRoute();
 const router = useRouter();
@@ -162,27 +206,24 @@ const {
     productCode,
     customerCode,
 } = route.params;
-const propertySpecs = useArray();
-const propertySpec = {
+const propertyItems = useArray();
+const propertyItem = {
     propertyCode: '',
     propertyName: '',
-    values: new Array(5),
-    uom: '',
-    numberSize: 0,
-    decimalScale: 0,
-    isTrancate: false,
-    isRequired: true,
-    isActive: true,
+    measuredDate: '',
+    measurerId: '',
+    measurerName: '',
 };
-const physpropSpecRestore = () => ({
+const physpropValueRestore = () => ({
+    productLot: '',
     productCode: '',
     productNode: '',
     customerCode: '',
     customerName: '',
-    specs: propertySpecs.items,
+    propertyItems: propertyItems.items,
     remarks: '',
 });
-const physpropSpec = ref(physpropSpecRestore());
+const physpropValue = ref(physpropValueRestore());
 
 onMounted(async () => {
     if (productCode) {
@@ -202,6 +243,41 @@ onMounted(async () => {
         }
     }
 });
+
+const productLotSelect = (selected) => {
+    physpropValue.value.productCode = selected?.code ?? '';
+    physpropValue.value.productName = selected?.name ?? '';
+    if (selected?.lot) {
+        physpropSpecGet();
+    }
+};
+
+const physpropSpecGet = async () => {
+    const productCode = physpropValue.value.productCode.slice(0, 9);
+    const customerCode = physpropValue.value.customerCode;
+
+    try {
+        startLoading();
+        const response = await api.get(`/api/physprop/specs/${productCode}/${customerCode ?? ''}`);
+        const physpropSpec = response.data;
+        for (const spec of physpropSpec.specs) {
+            propertyItem.propertyCode = spec.propertyCode;
+            propertyItem.propertyName = spec.propertyName;
+            propertyItem.uom = spec.uom;
+            propertyItem.numberSize = spec.numberSize;
+            console.log(propertyItem);
+            propertyItems.add(propertyItem);
+        }
+    } catch (error) {
+        addToast(error.message, 'error');
+    } finally {
+        stopLoading();
+    }
+};
+
+const measurerIdSelect = (index, selected) => {
+    propertyItems.items.value[index].measurerName = selected?.name ?? '';
+};
 
 const productCodeSelect = (selected) => {
     physpropSpec.value.productName = selected?.productName ?? '';

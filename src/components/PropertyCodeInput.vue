@@ -1,6 +1,6 @@
 <template>
     <div class="position-relative">
-        <input class="form-control" type="text" v-model="inputValue" @change="change">
+        <input class="form-control" type="text" v-bind="attrs" v-model="inputValue" @change="change">
         <a class="position-absolute top-50 end-0 translate-middle-y pe-3" role="button" @click="propertyCodeSelector.open">
             <i class="bi bi-search"></i>
         </a>
@@ -13,12 +13,17 @@
 </template>
 
 <script setup>
-import { ref, watch } from 'vue';
+defineOptions({
+    inheritAttrs: false,
+});
+import { ref, watch, useAttrs } from 'vue';
 import { api } from '@/services/api';
 import { useLoading } from '@/composables/useLoading';
 import { useModal } from '@/composables/useModal';
+import { ADHERENDS_KN, ADHERENDS_HO } from '@/constants/adherends';
 import { PropertyCodeSelector } from '@/components';
 
+const attrs = useAttrs();
 const props = defineProps({
     modelValue: String,
 });
@@ -49,10 +54,27 @@ const change = async () => {
     emit('errorMessage', '');
     if (!inputValue.value) return;
 
+    let adherendName = '';
+    const propertyCodes = inputValue.value.split('_');
+    if (propertyCodes[0] === 'A' && propertyCodes[3]) {
+        const adherend = ADHERENDS_KN.find(item => item.code === propertyCodes[3]);
+        if (adherend) adherendName = adherend.name;
+        propertyCodes[3] = '';
+    }
+    if (propertyCodes[0] !== 'A' && propertyCodes[4]) {
+        const adherend = ADHERENDS_HO.find(item => item.code === propertyCodes[4]);
+        if (adherend) adherendName = adherend.name;
+        propertyCodes[4] = '';
+    }
+    const propertyCode = propertyCodes.join('_');
+    if (!adherendName) {
+        emit('update:modelValue', propertyCode);
+    }
+
     try {
         startLoading();
-        const response = await api.get(`/api/physprop/names/${inputValue.value}`);
-        emit('change', response.data);
+        const response = await api.get(`/api/physprop/names/${propertyCode}`);
+        emit('change', { ...response.data, adherendName });
         emit('error', false);
         emit('errorMessage', '');
     } catch (error) {

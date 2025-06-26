@@ -2,7 +2,8 @@ import moment from 'moment';
 
 const format = (timestamp, formatStr) => {
     if (!timestamp) return '';
-    return moment.utc(timestamp).format(formatStr);
+    // return moment.utc(timestamp).format(formatStr);
+    return moment(timestamp).format(formatStr);
 };
 
 export const formatDate = (timestamp) => {

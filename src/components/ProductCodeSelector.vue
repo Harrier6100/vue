@@ -35,6 +35,7 @@
                                             <tr>
                                                 <td :class="orderBy('productCode')" @click="sortBy('productCode')">品名コード</td>
                                                 <td :class="orderBy('productName')" @click="sortBy('productName')">品名</td>
+                                                <td></td>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -49,6 +50,10 @@
                                             </tr>
                                         </tbody>
                                     </table>
+                                    <Pagination
+                                        v-model:page="page"
+                                        :pageLength="pageLength"
+                                    />
                                 </div>
                             </div>
                         </div>

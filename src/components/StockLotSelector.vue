@@ -15,11 +15,22 @@
                                 <div class="col-3">
                                     <form @submit.prevent="search" autocomplete="off">
                                         <div class="mb-3">
-                                            <input class="form-control" type="text" v-model="form.customerCode" placeholder="得意先コード">
+                                            <input class="form-control" type="text" v-model="form.lot" placeholder="ロット">
                                         </div>
 
                                         <div class="mb-3">
-                                            <input class="form-control" type="text" v-model="form.customerName" placeholder="得意先名">
+                                            <input class="form-control" type="text" v-model="form.code" placeholder="品名コード">
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <input class="form-control" type="text" v-model="form.name" placeholder="品名">
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="isIncludeOutOfStock" v-model="form.isIncludeOutOfStock">
+                                                <label class="form-check-label" for="isIncludeOutOfStock">残在庫なしを含む</label>
+                                            </div>
                                         </div>
 
                                         <div class="d-grid">
@@ -33,15 +44,17 @@
                                     <table class="table table-bordered table-hover">
                                         <thead class="table-secondary">
                                             <tr>
-                                                <td :class="orderBy('customerCode')" @click="sortBy('customerCode')">得意先コード</td>
-                                                <td :class="orderBy('customerName')" @click="sortBy('customerName')">得意先名</td>
+                                                <td :class="orderBy('lot')" @click="sortBy('lot')">ロット</td>
+                                                <td :class="orderBy('code')" @click="sortBy('code')">品名コード</td>
+                                                <td :class="orderBy('name')" @click="sortBy('name')">品名</td>
                                                 <td></td>
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <tr v-for="item in paginatedData" :key="item.customerCode">
-                                                <td class="text-start">{{ item.customerCode }}</td>
-                                                <td class="text-start">{{ item.customerName }}</td>
+                                            <tr v-for="item in paginatedData" :key="item.lot">
+                                                <td class="text-start">{{ item.lot }}</td>
+                                                <td class="text-start">{{ item.code }}</td>
+                                                <td class="text-start">{{ item.name }}</td>
                                                 <td class="text-start">
                                                     <div class="d-flex justify-content-center">
                                                         <button class="btn btn-link text-dark text-decoration-none p-0" @click="select(item)">選択</button>
@@ -85,20 +98,22 @@ const { sortedData, sortBy, orderBy } = useSort(items);
 const { page, pageLength, paginatedData } = usePagination(sortedData, 10);
 
 const formRestore = () => ({
-    customerCode: '',
-    customerName: '',
+    lot: '',
+    code: '',
+    name: '',
+    isIncludeOutOfStock: false,
 });
 const form = ref(formRestore());
 
 const search = async () => {
-    if (!form.value.customerCode && !form.value.customerName) {
+    if (!form.value.lot && !form.value.code && !form.value.name) {
         errorMessage.value.error = '検索条件を指定してください。';
         return;
     }
 
     try {
         startLoading();
-        const response = await api.get(`/api/customer/names/search`, { params: form.value });
+        const response = await api.get(`/api/stocks/search`, { params: form.value });
         items.value = response.data;
     } catch (error) {
         errorMessage.value.error = error.message;

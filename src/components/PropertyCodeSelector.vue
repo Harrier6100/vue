@@ -10,7 +10,7 @@
                         </div>
                         <div class="modal-body">
                             <Message class="mb-3" :error="errorMessage.error" />
-                            
+
                             <div class="row">
                                 <div class="col-3">
                                     <div class="mb-3">
@@ -42,6 +42,10 @@
                                             </tr>
                                         </tbody>
                                     </table>
+                                    <Pagination
+                                        v-model:page="page"
+                                        :pageLength="pageLength"
+                                    />
                                 </div>
                             </div>
                         </div>

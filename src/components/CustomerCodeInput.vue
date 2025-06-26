@@ -1,7 +1,7 @@
 <template>
     <div class="position-relative">
-        <input class="form-control" type="text" v-model="inputValue" @change="change">
-        <a class="position-absolute top-50 end-0 translate-middle-y pe-3" role="button" @click="customerCodeSelector.open">
+        <input class="form-control" type="text" v-bind="attrs" v-model="inputValue" @change="change">
+        <a v-if="!attrs.readonly" class="position-absolute top-50 end-0 translate-middle-y pe-3" role="button" @click="customerCodeSelector.open">
             <i class="bi bi-search"></i>
         </a>
     </div>
@@ -13,12 +13,16 @@
 </template>
 
 <script setup>
-import { ref, watch } from 'vue';
+defineOptions({
+    inheritAttrs: false,
+});
+import { ref, watch, useAttrs } from 'vue';
 import { api } from '@/services/api';
 import { useLoading } from '@/composables/useLoading';
 import { useModal } from '@/composables/useModal';
 import { CustomerCodeSelector } from '@/components';
 
+const attrs = useAttrs();
 const props = defineProps({
     modelValue: String,
 });

@@ -47,4 +47,12 @@ export default [
             requiresAuth: true,
         },
     },
+    {
+        path: '/physprop/values/add',
+        name: 'PhyspropValueAdd',
+        component: () => import('@/pages/PhyspropValueEdit.vue'),
+        meta: {
+            requiresAuth: true,
+        },
+    },
 ];
