@@ -1,24 +1,24 @@
 export default [
     {
-        path: '/physprop/names',
-        name: 'PhyspropNameList',
-        component: () => import('@/pages/PhyspropNameList.vue'),
+        path: '/physprops',
+        name: 'PhyspropList',
+        component: () => import('@/pages/PhyspropList.vue'),
         meta: {
             requiresAuth: true,
         },
     },
     {
-        path: '/physprop/names/add',
-        name: 'PhyspropNameAdd',
-        component: () => import('@/pages/PhyspropNameEdit.vue'),
+        path: '/physprops/add',
+        name: 'PhyspropAdd',
+        component: () => import('@/pages/PhyspropEdit.vue'),
         meta: {
             requiresAuth: true,
         },
     },
     {
-        path: '/physprop/names/:code',
-        name: 'PhyspropNameEdit',
-        component: () => import('@/pages/PhyspropNameEdit.vue'),
+        path: '/physprops/:code',
+        name: 'PhyspropEdit',
+        component: () => import('@/pages/PhyspropEdit.vue'),
         meta: {
             requiresAuth: true,
         },

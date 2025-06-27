@@ -10,7 +10,7 @@
         <table class="table table-hover">
             <thead>
                 <tr>
-                    <td :class="orderBy('id')" @click="sortBy('id')" role="button">ID</td>
+                    <td :class="orderBy('code')" @click="sortBy('code')" role="button">ID</td>
                     <td :class="orderBy('name')" @click="sortBy('name')" role="button">名前</td>
                     <td :class="orderBy('email')" @click="sortBy('email')" role="button">メールアドレス</td>
                     <td :class="orderBy('role')" @click="sortBy('role')" role="button">役割</td>
@@ -24,8 +24,8 @@
                 </tr>
             </thead>
             <tbody>
-                <tr v-for="user in paginatedData" :key="user.id">
-                    <td class="text-start">{{ user.id }}</td>
+                <tr v-for="user in paginatedData" :key="user.code">
+                    <td class="text-start">{{ user.code }}</td>
                     <td class="text-start">{{ user.name }}</td>
                     <td class="text-start">{{ user.email }}</td>
                     <td class="text-start">{{ user.role }}</td>
@@ -101,23 +101,23 @@ const addUser = () => {
     });
 };
 
-const updateUser = ({ id }) => {
+const updateUser = ({ code }) => {
     router.push({
         name: 'UserEdit',
-        params: { id },
+        params: { code },
         state: {
             routeQuery: route.query,
         },
     });
 };
 
-const removeUser = async ({ id }) => {
+const removeUser = async ({ code }) => {
     const isConfirmed = await confirm('削除しますか？');
     if (!isConfirmed) return;
 
     try {
         startLoading();
-        await api.delete(`/api/users/${id}`);
+        await api.delete(`/api/users/${code}`);
         addToast('削除しました。', 'success');
         await fetchUsers();
     } catch (error) {

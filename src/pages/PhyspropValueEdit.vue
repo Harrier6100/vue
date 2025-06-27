@@ -7,7 +7,7 @@
             <div class="mb-3">
                 <div class="row">
                     <div class="col">
-                        
+
                         <div class="mb-3">
                             <label class="form-label" for="productLot">ロット</label>
                             <StockLotInput
@@ -76,7 +76,7 @@
                                     <DatePicker class="form-control" v-model="propertyItem.measuredDate" placeholder="YYYY-MM-DD" />
                                 </td>
                                 <td>
-                                    <UserIdInput
+                                    <UserCodeInput
                                         v-model="propertyItem.measurerId"
                                         @change="measurerIdSelect(index, $event)"
                                         @errorMessage="propertyItem.errorMessage = $event"
@@ -116,7 +116,7 @@
                 <tbody>
                     <tr v-for="(spec, index) in physpropValue.specs" :key="index">
                         <td class="align-middle" style="width: 12%">
-                            <PropertyCodeInput
+                            <PhyspropCodeInput
                                 v-model="spec.propertyCode"
                                 @change="propertyCodeSelect(index, $event)"
                                 @errorMessage="spec.errorMessage = $event"
@@ -194,7 +194,7 @@ import { useAsyncLoading } from '@/composables/useAsyncLoading';
 import { useToast } from '@/composables/useToast';
 import { useMessage } from '@/composables/useMessage';
 import { useArray } from '@/composables/useArray';
-import { Message, SaveButtons, DatePicker, UserIdInput, StockLotInput, ProductCodeInput, CustomerCodeInput, PropertyCodeInput } from '@/components';
+import { Message, SaveButtons, DatePicker, UserCodeInput, StockLotInput, ProductCodeInput, CustomerCodeInput, PhyspropCodeInput } from '@/components';
 
 const route = useRoute();
 const router = useRouter();

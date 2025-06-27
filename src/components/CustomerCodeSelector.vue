@@ -95,7 +95,7 @@ const search = async () => {
 
     try {
         startLoading();
-        const response = await api.get(`/api/customer/names/search`, { params: form.value });
+        const response = await api.get(`/api/customers/search`, { params: form.value });
         items.value = response.data;
     } catch (error) {
         errorMessage.value.error = error.message;

@@ -18,14 +18,14 @@
                                     <table class="table table-bordered table-hover">
                                         <thead class="table-secondary">
                                             <tr>
-                                                <td :class="orderBy('id')" @click="sortBy('id')">ID</td>
+                                                <td :class="orderBy('code')" @click="sortBy('code')">社員番号</td>
                                                 <td :class="orderBy('name')" @click="sortBy('name')">名前</td>
                                                 <td></td>
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <tr v-for="item in paginatedData" :key="item.id">
-                                                <td class="text-start">{{ item.id }}</td>
+                                            <tr v-for="item in paginatedData" :key="item.code">
+                                                <td class="text-start">{{ item.code }}</td>
                                                 <td class="text-start">{{ item.name }}</td>
                                                 <td class="text-start">
                                                     <div class="d-flex justify-content-center">

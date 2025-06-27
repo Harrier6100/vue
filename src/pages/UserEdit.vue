@@ -5,9 +5,9 @@
         <form @submit.prevent="save" autocomplete="off">
 
             <div class="mb-3">
-                <label class="form-label" for="id">ID</label>
-                <input class="form-control" type="text" id="id" v-model="user.id" :readonly="!!id">
-                <Message :error="errorMessage.id" />
+                <label class="form-label" for="code">ID</label>
+                <input class="form-control" type="text" id="code" v-model="user.code" :readonly="!!code">
+                <Message :error="errorMessage.code" />
             </div>
 
             <div class="mb-3">
@@ -19,15 +19,15 @@
             <div class="mb-3">
                 <label class="form-label" for="role">役割</label>
                 <div class="form-check">
-                    <input class="form-check-input" type="radio" value="admin" v-model="user.role">
+                    <input class="form-check-input" type="radio" id="admin" value="admin" v-model="user.role">
                     <label class="form-check-label" for="admin">Admin</label>
                 </div>
                 <div class="form-check">
-                    <input class="form-check-input" type="radio" value="user" v-model="user.role">
+                    <input class="form-check-input" type="radio" id="user" value="user" v-model="user.role">
                     <label class="form-check-label" for="user">User</label>
                 </div>
                 <div class="form-check">
-                    <input class="form-check-input" type="radio" value="guest" v-model="user.role">
+                    <input class="form-check-input" type="radio" id="guest" value="guest" v-model="user.role">
                     <label class="form-check-label" for="guest">Guest</label>
                 </div>
             </div>
@@ -55,7 +55,7 @@
                 :isAsyncLoading="isAsyncLoading"
                 @cancel="cancel"
             />
-            
+
         </form>
     </div>
 </template>
@@ -77,9 +77,9 @@ const { isAsyncLoading, execute } = useAsyncLoading();
 const { addToast } = useToast();
 const { errorMessage } = useMessage();
 
-const { id } = route.params;
+const { code } = route.params;
 const userRestore = () => ({
-    id: '',
+    code: '',
     name: '',
     role: 'user',
     expiryDate: '',
@@ -89,11 +89,11 @@ const userRestore = () => ({
 const user = ref(userRestore());
 
 onMounted(async () => {
-    if (id) {
+    if (code) {
         try {
             startLoading();
-            const response = await api.get(`/api/users/${id}`);
-            user.value.id = response.data.id;
+            const response = await api.get(`/api/users/${code}`);
+            user.value.code = response.data.code;
             user.value.name = response.data.name;
             user.value.role = response.data.role;
             user.value.expiryDate = response.data.expiryDate;
@@ -116,9 +116,9 @@ watch(() => user.value.role, (newValue) => {
 const validate = () => {
     let isValid = true;
 
-    errorMessage.value.id = '';
-    if (!user.value.id) {
-        errorMessage.value.id = 'IDを入力してください。';
+    errorMessage.value.code = '';
+    if (!user.value.code) {
+        errorMessage.value.code = 'IDを入力してください。';
         isValid = false;
     }
 
@@ -145,9 +145,9 @@ const save = async () => {
 
     try {
         startLoading();
-        if (id) {
+        if (code) {
             await execute(async () => {
-                await api.put(`/api/users/${id}`, user.value);
+                await api.put(`/api/users/${code}`, user.value);
             });
             addToast('保存しました。', 'success');
         } else {

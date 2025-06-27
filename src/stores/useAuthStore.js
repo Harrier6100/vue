@@ -6,7 +6,7 @@ import { useUserStore } from '@/stores/useUserStore';
 export const useAuthStore = defineStore('auth', () => {
     const isAuth = ref(false);
     const userStore = useUserStore();
-    
+
     const authLogin = async (credentials) => {
         try {
             const response = await api.post(`/api/auth/login`, credentials);
@@ -36,7 +36,7 @@ export const useAuthStore = defineStore('auth', () => {
 
             await userStore.fetchUser();
         } catch (error) {
-            await logout();
+            await authLogout();
         }
     };
 

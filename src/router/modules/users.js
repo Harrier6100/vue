@@ -16,7 +16,7 @@ export default [
         },
     },
     {
-        path: '/users/:id',
+        path: '/users/:code',
         name: 'UserEdit',
         component: () => import('@/pages/UserEdit.vue'),
         meta: {

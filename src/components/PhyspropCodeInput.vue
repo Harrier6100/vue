@@ -1,15 +1,15 @@
 <template>
     <div class="position-relative">
         <input class="form-control" type="text" v-bind="attrs" v-model="inputValue" @change="change">
-        <a class="position-absolute top-50 end-0 translate-middle-y pe-3" role="button" @click="propertyCodeSelector.open">
+        <a class="position-absolute top-50 end-0 translate-middle-y pe-3" role="button" @click="physpropCodeSelector.open">
             <i class="bi bi-search"></i>
         </a>
     </div>
-    
-    <PropertyCodeSelector
-        :isOpen="propertyCodeSelector.isOpen.value"
+
+    <PhyspropCodeSelector
+        :isOpen="physpropCodeSelector.isOpen.value"
         @select="select"
-        @close="propertyCodeSelector.close"
+        @close="physpropCodeSelector.close"
     />
 </template>
 
@@ -22,7 +22,7 @@ import { api } from '@/services/api';
 import { useLoading } from '@/composables/useLoading';
 import { useModal } from '@/composables/useModal';
 import { ADHERENDS_KN, ADHERENDS_HO } from '@/constants/adherends';
-import { PropertyCodeSelector } from '@/components';
+import { PhyspropCodeSelector } from '@/components';
 
 const attrs = useAttrs();
 const props = defineProps({
@@ -30,7 +30,7 @@ const props = defineProps({
 });
 const emit = defineEmits(['update:modelValue', 'change', 'errorMessage', 'error']);
 const { isLoading, startLoading, stopLoading } = useLoading();
-const propertyCodeSelector = useModal();
+const physpropCodeSelector = useModal();
 const inputValue = ref(props.modelValue);
 
 watch(() => props.modelValue, (value) => {
@@ -56,25 +56,25 @@ const change = async () => {
     if (!inputValue.value) return;
 
     let adherendName = '';
-    const propertyCodes = inputValue.value.split('_');
-    if (propertyCodes[0] === 'A' && propertyCodes[3]) {
-        const adherend = ADHERENDS_KN.find(item => item.code === propertyCodes[3]);
+    const codes = inputValue.value.split('_');
+    if (codes[0] === 'A' && codes[3]) {
+        const adherend = ADHERENDS_KN.find(item => item.code === codes[3]);
         if (adherend) adherendName = adherend.name;
-        propertyCodes[3] = '';
+        codes[3] = '';
     }
-    if (propertyCodes[0] !== 'A' && propertyCodes[4]) {
-        const adherend = ADHERENDS_HO.find(item => item.code === propertyCodes[4]);
+    if (codes[0] !== 'A' && codes[4]) {
+        const adherend = ADHERENDS_HO.find(item => item.code === codes[4]);
         if (adherend) adherendName = adherend.name;
-        propertyCodes[4] = '';
+        codes[4] = '';
     }
-    const propertyCode = propertyCodes.join('_');
+    const code = codes.join('_');
     if (!adherendName) {
-        emit('update:modelValue', propertyCode);
+        emit('update:modelValue', code);
     }
 
     try {
         startLoading();
-        const response = await api.get(`/api/physprop/names/${propertyCode}`);
+        const response = await api.get(`/api/physprops/${code}`);
         emit('change', { ...response.data, adherendName });
         emit('errorMessage', '');
         emit('error', false);

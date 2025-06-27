@@ -45,7 +45,7 @@
                             <label class="form-label" for="customerName">得意先名</label>
                             <input class="form-control" type="text" id="customerName" v-model="physpropSpec.customerName" readonly>
                         </div>
-                        
+
                     </div>
                 </div>
             </div>
@@ -71,7 +71,7 @@
                 <tbody>
                     <tr v-for="(spec, index) in physpropSpec.specs" :key="index">
                         <td class="align-middle" style="width: 12%">
-                            <PropertyCodeInput
+                            <PhyspropCodeInput
                                 v-model="spec.propertyCode"
                                 @change="propertyCodeSelect(index, $event)"
                                 @errorMessage="spec.errorMessage = $event"
@@ -148,7 +148,7 @@ import { useAsyncLoading } from '@/composables/useAsyncLoading';
 import { useToast } from '@/composables/useToast';
 import { useMessage } from '@/composables/useMessage';
 import { useArray } from '@/composables/useArray';
-import { Message, SaveButtons, ProductCodeInput, CustomerCodeInput, PropertyCodeInput } from '@/components';
+import { Message, SaveButtons, ProductCodeInput, CustomerCodeInput, PhyspropCodeInput } from '@/components';
 
 const route = useRoute();
 const router = useRouter();

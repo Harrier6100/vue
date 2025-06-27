@@ -5,7 +5,7 @@
             <i class="bi bi-search"></i>
         </a>
     </div>
-    
+
     <ProductCodeSelector
         :isOpen="productCodeSelector.isOpen.value"
         @select="select"
@@ -56,7 +56,7 @@ const change = async () => {
 
     try {
         startLoading();
-        const response = await api.get(`/api/product/names/${inputValue.value}`);
+        const response = await api.get(`/api/products/${inputValue.value}`);
         emit('change', response.data);
         emit('errorMessage', '');
         emit('error', false);

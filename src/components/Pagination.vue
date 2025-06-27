@@ -8,7 +8,7 @@
         >
             <i class="bi bi-chevron-left"></i>
         </button>
-        <template v-for="page in pages" :key="page">
+        <template v-for="(page, index) in pages" :key="page === '...' ? page + '-' + index : page">
             <button v-if="page === '...'"
                 class="btn btn-link text-decoration-none"
                 type="button"

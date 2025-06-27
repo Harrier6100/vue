@@ -78,7 +78,7 @@ const { page, pageLength, paginatedData } = usePagination(sortedData, 10);
 onMounted(async () => {
     try {
         startLoading();
-        const response = await api.get(`/api/physprop/names`);
+        const response = await api.get(`/api/physprops`);
         items.value = response.data;
     } catch (error) {
         errorMessage.value.error = error.message;

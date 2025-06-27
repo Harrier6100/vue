@@ -38,7 +38,7 @@
                                         <tbody>
                                             <tr v-for="item in paginatedData" :key="item.productCode">
                                                 <td class="text-start">{{ item.productCode }}</td>
-                                                <td class="text-start">{{ item.productCode }}</td>
+                                                <td class="text-start">{{ item.productName }}</td>
                                                 <td class="text-start">
                                                     <div class="d-flex justify-content-center">
                                                         <button class="btn btn-link text-dark text-decoration-none p-0" @click="select(item)">選択</button>
@@ -95,7 +95,7 @@ const search = async () => {
 
     try {
         startLoading();
-        const response = await api.get(`/api/product/names/search`, { params: form.value });
+        const response = await api.get(`/api/products/search`, { params: form.value });
         items.value = response.data;
     } catch (error) {
         errorMessage.value.error = error.message;

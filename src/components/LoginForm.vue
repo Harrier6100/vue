@@ -9,9 +9,9 @@
                             <Message class="mb-3" :error="errorMessage.error" />
                             <form @submit.prevent="login" autocomplete="off">
                                 <div class="mb-3">
-                                    <label class="form-label" for="id">ログインID</label>
-                                    <input class="form-control" type="text" id="id" v-model="credentials.id">
-                                    <Message :error="errorMessage.id" />
+                                    <label class="form-label" for="code">ID</label>
+                                    <input class="form-control" type="text" id="code" v-model="credentials.code">
+                                    <Message :error="errorMessage.code" />
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label" for="password">パスワード</label>
@@ -52,7 +52,7 @@ const { errorMessage } = useMessage();
 const { authLogin } = useAuth();
 
 const credentialsRestore = () => ({
-    id: '',
+    code: '',
     password: '',
 });
 const credentials = ref(credentialsRestore());
@@ -60,9 +60,9 @@ const credentials = ref(credentialsRestore());
 const validate = () => {
     let isValid = true;
 
-    errorMessage.value.id = '';
-    if (!credentials.value.id) {
-        errorMessage.value.id = 'ログインIDを入力してください。';
+    errorMessage.value.code = '';
+    if (!credentials.value.code) {
+        errorMessage.value.code = 'IDを入力してください。';
         isValid = false;
     }
 
