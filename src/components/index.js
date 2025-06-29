@@ -11,6 +11,7 @@ export { default as ProductCodeSelector } from './ProductCodeSelector.vue';
 export { default as PhyspropCodeInput } from './PhyspropCodeInput.vue';
 export { default as PhyspropCodeSelector } from './PhyspropCodeSelector.vue';
 export { default as SaveButtons } from './SaveButtons.vue';
+export { default as Sidebar } from './Sidebar.vue';
 export { default as StockLotInput } from './StockLotInput.vue';
 export { default as StockLotSelector } from './StockLotSelector.vue';
 export { default as Toast } from './Toast.vue';

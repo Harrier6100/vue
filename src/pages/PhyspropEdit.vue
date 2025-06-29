@@ -88,7 +88,7 @@ const physpropRestore = () => ({
     codes: new Array(5).fill(''),
     uom: '',
     si_uom: '',
-    numberSize: 1,
+    numberSize: 0,
     localizes: ['ja', 'en'].map((lang) => {
         return {
             lang: lang,

@@ -1,5 +1,5 @@
 <template>
-    <div class="container-fluid">
+    <div class="">
         <div class="mb-3">物性規格</div>
 
         <form @submit.prevent="save" autocomplete="off">
@@ -22,7 +22,7 @@
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label" for="productCode">品名</label>
+                            <label class="form-label" for="productCode">品名コード</label>
                             <input class="form-control" type="text" id="productCode" v-model="physpropValue.productCode" readonly>
                         </div>
 
@@ -94,81 +94,6 @@
                 <div class="col-3">
                 </div>
             </div>
-
-            <table class="table table-bordered">
-                <thead class="table-secondary">
-                    <tr>
-                        <td class="align-middle">物性コード</td>
-                        <td class="align-middle">物性名</td>
-                        <td class="align-middle">規格値</td>
-                        <td class="align-middle">単位</td>
-                        <td class="align-middle">ｎ数</td>
-                        <td class="align-middle">桁数</td>
-                        <td class="align-middle">必須</td>
-                        <td class="align-middle">有効</td>
-                        <td class="align-middle">
-                            <div class="d-flex justify-content-center">
-                                <button type="button" tabindex="-1" @click="propertySpecs.add(propertySpec)">追加</button>
-                            </div>
-                        </td>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr v-for="(spec, index) in physpropValue.specs" :key="index">
-                        <td class="align-middle" style="width: 12%">
-                            <PhyspropCodeInput
-                                v-model="spec.propertyCode"
-                                @change="propertyCodeSelect(index, $event)"
-                                @errorMessage="spec.errorMessage = $event"
-                                @error="isError = $event"
-                            />
-                            <Message :error="spec.errorMessage" />
-                        </td>
-                        <td class="align-middle" style="width: 20%">
-                            <input class="form-control" type="text" v-model="spec.propertyName" readonly>
-                        </td>
-                        <td class="align-middle" style="width: 30%">
-                            <div class="d-flex gap-1">
-                                <input class="form-control" type="text" v-model="spec.values[0]">
-                                <input class="form-control" type="text" v-model="spec.values[1]">
-                                <input class="form-control" type="text" v-model="spec.values[2]">
-                                <input class="form-control" type="text" v-model="spec.values[3]">
-                                <input class="form-control" type="text" v-model="spec.values[4]">
-                            </div>
-                        </td>
-                        <td class="align-middle" style="width: 8%">
-                            <input class="form-control" type="text" v-model="spec.uom" readonly>
-                        </td>
-                        <td class="align-middle" style="width: 5%">
-                            <input class="form-control" type="number" v-model="spec.numberSize">
-                        </td>
-                        <td class="align-middle" style="width: 6%">
-                            <div class="d-flex align-items-center gap-1">
-                                <input class="form-control" type="number" v-model="spec.decimalScale">
-                                <input class="form-check-input" type="checkbox" v-model="spec.isTrancate">
-                            </div>
-                        </td>
-                        <td class="align-middle" style="width: 3%">
-                            <div class="d-flex justify-content-center">
-                                <input class="form-check-input" type="checkbox" v-model="spec.isRequired">
-                            </div>
-                        </td>
-                        <td class="align-middle" style="width: 3%">
-                            <div class="d-flex justify-content-center">
-                                <input class="form-check-input" type="checkbox" v-model="spec.isActive">
-                            </div>
-                        </td>
-                        <td class="align-middle" style="width: 10%">
-                            <div class="d-flex justify-content-center gap-1">
-                                <button type="button" tabindex="-1" @click="propertySpecs.push(index, propertySpec)">挿</button>
-                                <button type="button" tabindex="-1" @click="propertySpecs.up(index)">↑</button>
-                                <button type="button" tabindex="-1" @click="propertySpecs.down(index)">↓</button>
-                                <button type="button" tabindex="-1" @click="propertySpecs.remove(index)">削</button>
-                            </div>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
 
             <div class="mb-3">
                 <label class="form-label" for="remarks">備考</label>

@@ -1,5 +1,9 @@
 @import "bootstrap/scss/bootstrap";
 
+.modal-backdrop {
+  z-index: 1040 !important;
+}
+
 .form-control {
   &::placeholder {
     color: $gray-500;
