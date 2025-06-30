@@ -1,5 +1,5 @@
 <template>
-    <div class="">
+    <div class="container-fluid">
         <div class="mb-3">アカウント</div>
 
         <div class="d-flex justify-content-between gap-3 mb-3">

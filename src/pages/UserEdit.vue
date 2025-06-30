@@ -1,5 +1,5 @@
 <template>
-    <div class="">
+    <div class="container-fluid">
         <div class="mb-3">アカウント</div>
 
         <form @submit.prevent="save" autocomplete="off">
