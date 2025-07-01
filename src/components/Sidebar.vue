@@ -5,92 +5,45 @@
             <div class="offcanvas-header border-bottom">
                 <button class="btn-close" type="button" @click="close"></button>
             </div>
-            <div class="offcanvas-body p-0">
-                <!-- <transition name="slide-fade">
-                    <div v-if="!openSubMenuName">
-                        <div class="border-top">
-                            <router-link class="text-dark text-decoration-none" to="/users" @click="close">
-                                <div class="d-flex flex-row p-3">
-                                    <div class="flex-shrink-0">アカウント管理</div>
+            <div class="offcanvas-body overflow-hidden p-0">
+                <div class="position-relative">
+                    <transition :name="transitionName">
+                        <div v-if="menu === 'root'" class="slide-menu">
+                            <div v-for="item in filteredMenus" :key="item.menu" class="border-bottom">
+                                <div class="d-flex flex-row p-3" role="button" @click="pushMenu(item.menu)">
+                                    <div class="flex-shrink-0">{{ item.label }}</div>
                                     <div class="d-flex w-100">
                                         <i class="bi bi-arrow-right ms-auto"></i>
                                     </div>
-                                </div>
-                            </router-link>
-                        </div>
-                        <div class="border-top">
-                            <div class="d-flex flex-row p-3" role="button" @click="openSubMenu('physprop')">
-                                <div class="flex-shrink-0">アカウント管理</div>
-                                <div class="d-flex w-100">
-                                    <i class="bi bi-arrow-right ms-auto"></i>
                                 </div>
                             </div>
                         </div>
-                        <div class="border-top border-bottom">
-                            <router-link class="text-dark text-decoration-none" to="/physprops" @click="close">
-                                <div class="d-flex flex-row p-3">
-                                    <div class="flex-shrink-0">物性</div>
+                    </transition>
+                    <transition :name="transitionName">
+                        <div v-if="menu !== 'root'" class="slide-menu">
+                            <div class="border-bottom">
+                                <div class="d-flex flex-row p-3" role="button" @click="popMenu()">
+                                    <div class="flex-shrink-0 me-1">
+                                        <i class="bi bi-arrow-left ms-auto"></i>
+                                    </div>
+                                    <div class="d-flex w-100">戻る</div>
+                                </div>
+                            </div>
+                            <div v-for="item in filteredMenus" :key="item.to || item.menu" class="border-bottom">
+                                <router-link v-if="item.to" class="text-dark text-decoration-none" :to="item.to" @click="close">
+                                    <div class="d-flex flex-row p-3" role="button">
+                                        <div class="flex-shrink-0">{{ item.label }}</div>
+                                    </div>
+                                </router-link>
+                                <div v-else-if="item.menu" class="d-flex flex-row p-3" role="button" @click="pushMenu(item.menu)">
+                                    <div class="flex-shrink-0">{{ item.label }}</div>
                                     <div class="d-flex w-100">
                                         <i class="bi bi-arrow-right ms-auto"></i>
                                     </div>
                                 </div>
-                            </router-link>
-                        </div>
-                    </div>
-                </transition>
-                <transition name="slide-fade">
-                    <div v-if="openSubMenuName === 'physprop'">
-                        <div class="border-top">
-                            <div class="d-flex flex-row p-3" role="button" @click="openSubMenu(null)">
-                                <div class="d-flex">
-                                    <i class="bi bi-arrow-left me-auto"></i>
-                                </div>
-                                <div class="flex-shrink-0 w-100">アカウント管理</div>
                             </div>
                         </div>
-                        <div class="border-top">
-                            <router-link class="text-dark text-decoration-none" to="/users" @click="close">
-                                <div class="d-flex flex-row p-3">
-                                    <div class="flex-shrink-0">アカウント管理</div>
-                                    <div class="d-flex w-100">
-                                        <i class="bi bi-arrow-right ms-auto"></i>
-                                    </div>
-                                </div>
-                            </router-link>
-                        </div>
-                    </div>
-                </transition> -->
-                <div class="offcanvas-body p-0 position-relative" style="min-height: 300px; overflow: hidden;">
-                    <div class="offcanvas-body position-relative" style="overflow: hidden; min-height: 300px;">
-                        <transition :name="transitionName">
-                        <div v-if="currentMenu === 'root'" class="menu-slide">
-                            <div @click="pushMenu('account')" class="p-3 border-bottom">アカウント管理 →</div>
-                            <div @click="pushMenu('settings')" class="p-3 border-bottom">設定 →</div>
-                        </div>
-                        </transition>
-
-                        <transition :name="transitionName">
-                        <div v-if="currentMenu === 'account'" class="menu-slide">
-                            <div @click="popMenu()" class="p-3 border-bottom">← 戻る</div>
-                            <div @click="pushMenu('account-profile')" class="p-3 border-bottom">プロフィール →</div>
-                            <router-link to="/users">アカウント管理</router-link>
-                        </div>
-                        </transition>
-
-                        <transition :name="transitionName">
-                        <div v-if="currentMenu === 'account-profile'" class="menu-slide">
-                            <div @click="popMenu()" class="p-3 border-bottom">← 戻る</div>
-                            <router-link to="/users/profile" class="p-3 d-block">プロフィール画面</router-link>
-                        </div>
-                        </transition>
-
-                        <transition :name="transitionName">
-                        <div v-if="currentMenu === 'settings'" class="menu-slide">
-                            <div @click="popMenu()" class="p-3 border-bottom">← 戻る</div>
-                            <router-link to="/users/profile" class="p-3 d-block">プロフィール画面</router-link>
-                        </div>
-                        </transition>
-                    </div>
+                    </transition>
                 </div>
             </div>
         </div>
@@ -100,13 +53,63 @@
 <script setup>
 import { ref, computed } from 'vue';
 
+const menuDefinitions = {
+    root: [
+        {
+            label: '品質',
+            menu: 'physprop',
+        },
+        {
+            label: '管理',
+            menu: 'management',
+        },
+    ],
+    physprop: [
+        {
+            label: '物性マスタ',
+            to: '/physprops',
+            permission: 'view:physprops',
+        },
+        {
+            label: '物性規格マスタ',
+            to: '/physprop/specs',
+            permission: 'view:physprop_specs',
+        },
+    ],
+    management: [
+        {
+            label: 'その他',
+            menu: 'other',
+        },
+        {
+            label: 'アカウント管理',
+            to: '/users',
+            permission: 'view:users',
+        },
+    ],
+    other: [
+        {
+            label: 'その他テスト',
+            to: '/other',
+            permission: 'view:other',
+        },
+    ],
+};
+
 const props = defineProps({
     isOpen: Boolean,
 });
 const emit = defineEmits(['close']);
-
 const menuStack = ref([]);
 const isForward = ref(true);
+
+const menu = computed(() => {
+    return menuStack.value.at(-1) || 'root';
+});
+
+const transitionName = computed(() => {
+    return isForward.value ? 'slide-forward' : 'slide-back';
+});
 
 const pushMenu = (menuName) => {
     menuStack.value.push(menuName);
@@ -118,33 +121,43 @@ const popMenu = () => {
     isForward.value = false;
 };
 
-const currentMenu = computed(() => {
-    return menuStack.value.at(-1) || 'root';
-});
-
-const transitionName = computed(() => {
-    return isForward.value ? 'slide-forward' : 'slide-back';
-});
-
-
-const subMenu = ref(null);
-const openSubMenuName = ref(null);
-
-const openSubMenu = (menuName) => {
-    if (openSubMenuName.value === menuName) {
-        openSubMenuName.value = null;
-    } else {
-        openSubMenuName.value = menuName;
-    }
-};
-
 const close = () => {
     emit('close');
 };
+
+const userPermissions = ref(['view:other']);
+// const filteredMenus = computed(() => {
+//     const menuName = menuStack.value.at(-1) || 'root';
+//     return menuDefinitions[menuName].filter(item => {
+//         return !item.permission || userPermissions.value.includes(item.permission);
+//     });
+// });
+
+const filteredMenus = computed(() => {
+    const menuName = menuStack.value.at(-1) || 'root';
+    const items = menuDefinitions[menuName] || [];
+
+    return items.filter(item => {
+        if (item.to) {
+            return !item.permission || userPermissions.value.includes(item.permission);
+        }
+
+        if (item.menu) {
+            const subItems = menuDefinitions[item.menu] || [];
+            const hasVisibleChildren = subItems.some(subItem => {
+                return !subItem.permission || userPermissions.value.includes(subItem.permission);
+            });
+            return hasVisibleChildren;
+        }
+
+        return true;
+    });
+});
+
 </script>
 
 <style>
-.menu-slide {
+.slide-menu {
   position: absolute;
   width: 100%;
   top: 0;
