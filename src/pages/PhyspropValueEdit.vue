@@ -1,5 +1,5 @@
 <template>
-    <div class="">
+    <div class="container-fluid">
         <div class="mb-3">物性規格</div>
 
         <form @submit.prevent="save" autocomplete="off">
@@ -61,15 +61,28 @@
                     <table class="table table-bordered">
                         <thead class="table-secondary">
                             <tr>
-                                <td>物性コード</td>
-                                <td>物性名</td>
-                                <td>測定日</td>
-                                <td>測定者</td>
-                                <td>測定者名</td>
+                                <td rowspan="2">#</td>
+                                <td rowspan="2">物性コード</td>
+                                <td rowspan="2">物性名</td>
+                                <td rowspan="2">測定日</td>
+                                <td rowspan="2">測定者</td>
+                                <td rowspan="2">測定者名</td>
+                                <td colspan="2">規格値</td>
+                                <td rowspan="2">単位</td>
+                                <td rowspan="2">ｎ数</td>
+                                <td rowspan="2">平均値</td>
+                                <td rowspan="2">判定</td>
+                            </tr>
+                            <tr>
+                                <td>下限</td>
+                                <td>上限</td>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr v-for="(propertyItem, index) in physpropValue.propertyItems" :key="index">
+                            <tr v-for="(propertyItem, index) in physpropValue.propertyItems" :key="index" @click="selectedItemIndex = index">
+                                <td>
+                                    <input class="form-check-input" type="radio" :value="index" v-model="selectedItemIndex">
+                                </td>
                                 <td>{{ propertyItem.propertyCode }}</td>
                                 <td>{{ propertyItem.propertyName }}</td>
                                 <td>
@@ -87,11 +100,38 @@
                                 <td>
                                     <input class="form-control" type="text" v-model="propertyItem.measurerName" readonly>
                                 </td>
+                                <td>{{ propertyItem.specLowerValue }}</td>
+                                <td>{{ propertyItem.specUpperValue }}</td>
+                                <td>{{ propertyItem.uom }}</td>
+                                <td>{{ propertyItem.numberSize }}</td>
+                                <td>{{ propertyItem.meanValue }}</td>
+                                <td>{{ propertyItem.score }}</td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
                 <div class="col-3">
+                    <table class="table table-bordered">
+                        <thead class="table-secondary">
+                            <tr>
+                                <td>
+                                    <span>最小値={{ propertyValuesLowerValue }}</span>
+                                    <span>最大値={{ propertyValuesUpperValue }}</span>
+                                </td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="(propertyValue, index) in selectedItemPropertyValues" :key="index">
+                                <td>{{ index + 1 }}</td>
+                                <td>
+                                    <input class="form-control" v-model="propertyValue.value" @change="propertyValueChange(index)">
+                                </td>
+                                <td>
+                                    {{ propertyValue.score }}
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
 
@@ -111,8 +151,9 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
+import Decimal from 'decimal.js';
 import { api } from '@/services/api';
 import { useLoading } from '@/composables/useLoading';
 import { useAsyncLoading } from '@/composables/useAsyncLoading';
@@ -134,13 +175,6 @@ const {
     customerCode,
 } = route.params;
 const propertyItems = useArray();
-const propertyItem = {
-    propertyCode: '',
-    propertyName: '',
-    measuredDate: '',
-    measurerId: '',
-    measurerName: '',
-};
 const physpropValueRestore = () => ({
     productLot: '',
     productCode: '',
@@ -151,6 +185,7 @@ const physpropValueRestore = () => ({
     remarks: '',
 });
 const physpropValue = ref(physpropValueRestore());
+const selectedItemIndex = ref(null);
 
 onMounted(async () => {
     if (productCode) {
@@ -188,11 +223,41 @@ const physpropSpecGet = async () => {
         const response = await api.get(`/api/physprop/specs/${productCode}/${customerCode ?? ''}`);
         const physpropSpec = response.data;
         for (const spec of physpropSpec.specs) {
+            const propertyItem = {};
             propertyItem.propertyCode = spec.propertyCode;
             propertyItem.propertyName = spec.propertyName;
+            propertyItem.measuredDate = null;
+            propertyItem.measurerCode = null;
+            propertyItem.measurerName = null;
+            propertyItem.specLowerValue = null;
+            propertyItem.specUpperValue = null;
             propertyItem.uom = spec.uom;
             propertyItem.numberSize = spec.numberSize;
-            console.log(propertyItem);
+            propertyItem.isTrancate = spec.isTrancate;
+            propertyItem.propertyValues = Array.from(
+                Array(spec.numberSize), () => {
+                    return {
+                        value: null,
+                        score: null,
+                    }
+                }
+            );
+            propertyItem.meanValue = null;
+            propertyItem.score = null;
+            if (spec.values[1] && !spec.values[2]) {
+                propertyItem.specLowerValue = spec.values[1];
+            }
+            if (!spec.values[1] && spec.values[2]) {
+                propertyItem.specUpperValue = spec.values[2];
+            }
+            if (spec.values[1] && spec.values[2]) {
+                propertyItem.specLowerValue = spec.values[1];
+                propertyItem.specUpperValue = spec.values[2];
+            }
+            if (spec.values[3] && spec.values[4]) {
+                propertyItem.specLowerValue = Decimal(spec.values[3]).sub(spec.values[4]).toNumber();
+                propertyItem.specUpperValue = Decimal(spec.values[3]).add(spec.values[4]).toNumber();
+            }
             propertyItems.add(propertyItem);
         }
     } catch (error) {
@@ -219,6 +284,54 @@ const propertyCodeSelect = (index, selected) => {
     physpropSpec.value.specs[index].propertyName = (selected?.name ?? '') + (selected?.adherendName ?? '');
     physpropSpec.value.specs[index].uom = selected?.uom ?? '';
     physpropSpec.value.specs[index].numberSize = selected?.numberSize ?? 0;
+};
+
+const selectedItem = computed(() => {
+    if (selectedItemIndex.value !== null) {
+        return physpropValue.value.propertyItems[selectedItemIndex.value];
+    }
+    return null;
+});
+
+const selectedItemPropertyValues = computed(() => {
+    if (selectedItemIndex.value !== null) {
+        return selectedItem.value.propertyValues;
+    }
+    return [];
+});
+
+const propertyValuesLowerValue = computed(() => {
+    if (selectedItemIndex.value !== null) {
+        const propertyValues = selectedItemPropertyValues.value.filter(item => item.value).map(item => item.value);
+        if (propertyValues.length) {
+            return Math.min(...propertyValues);
+        }
+    }
+    return null;
+});
+
+const propertyValuesUpperValue = computed(() => {
+    if (selectedItemIndex.value !== null) {
+        const propertyValues = selectedItemPropertyValues.value.filter(item => item.value).map(item => item.value);
+        if (propertyValues.length) {
+            return Math.max(...propertyValues);
+        }
+    }
+    return null;
+});
+
+const propertyValueChange = (index) => {
+    if (selectedItemIndex.value !== null) {
+        const propertyValues = selectedItemPropertyValues.value[index].value.trim().split(/ +|\t/);
+        if (propertyValues.length > 1) {
+            for (const n in propertyValues) {
+                if (selectedItemPropertyValues.value[n]) {
+                    selectedItemPropertyValues.value[n].value = propertyValues[n];
+                    propertyValueChange(n);
+                }
+            }
+        }
+    }
 };
 
 const validate = () => {

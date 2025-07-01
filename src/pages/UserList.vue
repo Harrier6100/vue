@@ -63,7 +63,7 @@ import { useFilter } from '@/composables/useFilterWithQuery';
 import { useSort } from '@/composables/useSortWithQuery';
 import { usePagination } from '@/composables/usePaginationWithQuery';
 import { formatDate, formatAt } from '@/utils/formatDateTime';
-import { Message, Pagination } from '@/components';
+import { Pagination } from '@/components';
 
 const route = useRoute();
 const router = useRouter();

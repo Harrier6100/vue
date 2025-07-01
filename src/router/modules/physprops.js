@@ -48,6 +48,14 @@ export default [
         },
     },
     {
+        path: '/physprop/values',
+        name: 'PhyspropValueList',
+        component: () => import('@/pages/PhyspropValueList.vue'),
+        meta: {
+            requiresAuth: true,
+        },
+    },
+    {
         path: '/physprop/values/add',
         name: 'PhyspropValueAdd',
         component: () => import('@/pages/PhyspropValueEdit.vue'),

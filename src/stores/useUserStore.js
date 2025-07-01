@@ -9,6 +9,10 @@ export const useUserStore = defineStore('user', () => {
         return user.value?.name ?? '';
     });
 
+    const userRole = computed(() => {
+        return user.value?.role ?? '';
+    });
+
     const fetchUser = async () => {
         try {
             const response = await api.get(`/api/auth/me`);
@@ -26,6 +30,7 @@ export const useUserStore = defineStore('user', () => {
     return {
         user,
         userName,
+        userRole,
         fetchUser,
         clearUser,
     };
