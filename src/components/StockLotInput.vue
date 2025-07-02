@@ -5,7 +5,7 @@
             <i class="bi bi-search"></i>
         </a>
     </div>
-    
+
     <StockLotSelector
         :isOpen="stockLotSelector.isOpen.value"
         @select="select"

@@ -1,6 +1,6 @@
 <template>
     <div class="container-fluid">
-        <div class="mb-3">物性規格</div>
+        <div class="mb-3">物性値</div>
 
         <form @submit.prevent="save" autocomplete="off">
 
@@ -13,23 +13,15 @@
                             <StockLotInput
                                 id="productLot"
                                 v-model="physpropValue.productLot"
-                                @change="productLotSelect"
+                                @change="productLotChange"
                                 @errorMessage="errorMessage.productLot = $event"
                                 @error="isError = $event"
                                 :readonly="!!productLot"
                             />
                             <Message :error="errorMessage.productLot" />
                         </div>
-
-                        <div class="mb-3">
-                            <label class="form-label" for="productCode">品名コード</label>
-                            <input class="form-control" type="text" id="productCode" v-model="physpropValue.productCode" readonly>
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label" for="productName">品名</label>
-                            <input class="form-control" type="text" id="productName" v-model="physpropValue.productName" readonly>
-                        </div>
+                        <div>{{ physpropValue.productCode }}</div>
+                        <div>{{ physpropValue.productName }}</div>
 
                     </div>
                     <div class="col">
@@ -39,18 +31,14 @@
                             <CustomerCodeInput
                                 id="customerCode"
                                 v-model="physpropValue.customerCode"
-                                @change="customerCodeSelect"
+                                @change="customerCodeChange"
                                 @errorMessage="errorMessage.customerCode = $event"
                                 @error="isError = $event"
                                 :readonly="!!productLot"
                             />
                             <Message :error="errorMessage.customerCode" />
                         </div>
-
-                        <div class="mb-3">
-                            <label class="form-label" for="customerName">得意先名</label>
-                            <input class="form-control" type="text" id="customerName" v-model="physpropValue.customerName" readonly>
-                        </div>
+                        <div>{{ physpropValue.customerName }}</div>
 
                     </div>
                 </div>
@@ -74,38 +62,43 @@
                                 <td rowspan="2">判定</td>
                             </tr>
                             <tr>
-                                <td>下限</td>
-                                <td>上限</td>
+                                <td>最小値</td>
+                                <td>最大値</td>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr v-for="(propertyItem, index) in physpropValue.propertyItems" :key="index" @click="selectedItemIndex = index">
-                                <td>
-                                    <input class="form-check-input" type="radio" :value="index" v-model="selectedItemIndex">
+                            <tr v-for="(propertyItem, index) in physpropValue.propertyItems" :class="{ 'opacity-25': selectedIndex != index }" :key="index" role="button" @click="selectedIndex = index">
+                                <td class="text-center align-middle">
+                                    <input class="form-check-input" type="radio" :value="index" v-model="selectedIndex">
                                 </td>
-                                <td>{{ propertyItem.propertyCode }}</td>
-                                <td>{{ propertyItem.propertyName }}</td>
+                                <td class="text-start align-middle">{{ propertyItem.propertyCode }}</td>
+                                <td class="text-start align-middle">{{ propertyItem.propertyName }}</td>
                                 <td>
-                                    <DatePicker class="form-control" v-model="propertyItem.measuredDate" placeholder="YYYY-MM-DD" />
+                                    <DatePicker
+                                        class="form-control"
+                                        v-model="propertyItem.measuredDate"
+                                        placeholder="YYYY-MM-DD"
+                                    />
                                 </td>
                                 <td>
                                     <UserCodeInput
-                                        v-model="propertyItem.measurerId"
-                                        @change="measurerIdSelect(index, $event)"
+                                        v-model="propertyItem.measurerCode"
+                                        @change="measurerCodeChange"
                                         @errorMessage="propertyItem.errorMessage = $event"
                                         @error="isError = $event"
                                     />
                                     <Message :error="propertyItem.errorMessage" />
                                 </td>
-                                <td>
-                                    <input class="form-control" type="text" v-model="propertyItem.measurerName" readonly>
+                                <td class="text-start align-middle">{{ propertyItem.measurerName }}</td>
+                                <td class="text-end align-middle">{{ propertyItem.specLowerValue }}</td>
+                                <td class="text-end align-middle">{{ propertyItem.specUpperValue }}</td>
+                                <td class="text-start align-middle">{{ propertyItem.uom }}</td>
+                                <td class="text-end align-middle">{{ propertyItem.numberSize }}</td>
+                                <td class="text-end align-middle">{{ propertyItem.mean }}</td>
+                                <td class="text-center align-middle" :class="{ 'text-danger': propertyValuesCheck(propertyItem) }">
+                                    <span v-if="propertyItem.score === true" class="bi bi-circle"></span>
+                                    <span v-if="propertyItem.score === false" class="bi bi-x-lg"></span>
                                 </td>
-                                <td>{{ propertyItem.specLowerValue }}</td>
-                                <td>{{ propertyItem.specUpperValue }}</td>
-                                <td>{{ propertyItem.uom }}</td>
-                                <td>{{ propertyItem.numberSize }}</td>
-                                <td>{{ propertyItem.meanValue }}</td>
-                                <td>{{ propertyItem.score }}</td>
                             </tr>
                         </tbody>
                     </table>
@@ -114,20 +107,31 @@
                     <table class="table table-bordered">
                         <thead class="table-secondary">
                             <tr>
-                                <td>
+                                <td colspan="3">
                                     <span>最小値={{ propertyValuesLowerValue }}</span>
                                     <span>最大値={{ propertyValuesUpperValue }}</span>
                                 </td>
                             </tr>
+                            <tr>
+                                <td>
+                                    <div class="d-flex justify-content-center gap-3">
+                                        <button class="btn btn-sm btn-link text-decoration-none p-0" @click="page--" :disabled="page == 1">◀</button>
+                                        <button class="btn btn-sm btn-link text-decoration-none p-0" @click="page++" :disabled="page >= pageLength">▶</button>
+                                    </div>
+                                </td>
+                                <td>測定値</td>
+                                <td>判定</td>
+                            </tr>
                         </thead>
                         <tbody>
-                            <tr v-for="(propertyValue, index) in selectedItemPropertyValues" :key="index">
-                                <td>{{ index + 1 }}</td>
+                            <tr v-for="(propertyValue, index) in propertyValues" :key="index" v-show="propertyValuesShow(index)">
+                                <td class="text-center align-middle">{{ index + 1 }}</td>
                                 <td>
                                     <input class="form-control" v-model="propertyValue.value" @change="propertyValueChange(index)">
                                 </td>
-                                <td>
-                                    {{ propertyValue.score }}
+                                <td class="text-center align-middle">
+                                    <span v-if="propertyValue.score === true" class="bi bi-circle"></span>
+                                    <span v-if="propertyValue.score === false" class="bi bi-x-lg"></span>
                                 </td>
                             </tr>
                         </tbody>
@@ -135,249 +139,191 @@
                 </div>
             </div>
 
-            <div class="mb-3">
-                <label class="form-label" for="remarks">備考</label>
-                <textarea class="form-control" id="remarks" v-model="physpropValue.remarks"></textarea>
-            </div>
-
-            <SaveButtons
-                :isLoading="isLoading"
-                :isAsyncLoading="isAsyncLoading"
-                @cancel="cancel"
-            />
-
         </form>
     </div>
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
+import { ref, computed } from 'vue';
 import Decimal from 'decimal.js';
 import { api } from '@/services/api';
-import { useLoading } from '@/composables/useLoading';
-import { useAsyncLoading } from '@/composables/useAsyncLoading';
-import { useToast } from '@/composables/useToast';
 import { useMessage } from '@/composables/useMessage';
 import { useArray } from '@/composables/useArray';
-import { Message, SaveButtons, DatePicker, UserCodeInput, StockLotInput, ProductCodeInput, CustomerCodeInput, PhyspropCodeInput } from '@/components';
+import { usePagination } from '@/composables/usePagination';
+import { Message, DatePicker, StockLotInput, CustomerCodeInput, UserCodeInput } from '@/components';
 
-const route = useRoute();
-const router = useRouter();
-const { isLoading, startLoading, stopLoading } = useLoading();
-const { isAsyncLoading, execute } = useAsyncLoading();
-const { addToast } = useToast();
 const { errorMessage } = useMessage();
-const isError = ref(false);
 
-const {
-    productCode,
-    customerCode,
-} = route.params;
 const propertyItems = useArray();
 const physpropValueRestore = () => ({
     productLot: '',
     productCode: '',
-    productNode: '',
+    productName: '',
     customerCode: '',
     customerName: '',
     propertyItems: propertyItems.items,
-    remarks: '',
 });
 const physpropValue = ref(physpropValueRestore());
-const selectedItemIndex = ref(null);
 
-onMounted(async () => {
-    if (productCode) {
-        try {
-            startLoading();
-            const response = await api.get(`/api/physprop/specs/${productCode}/${customerCode ?? ''}`);
-            physpropSpec.value.productCode = response.data.productCode;
-            physpropSpec.value.productName = response.data.productName;
-            physpropSpec.value.customerCode = response.data.customerCode;
-            physpropSpec.value.customerName = response.data.customerName;
-            physpropSpec.value.specs = response.data.specs;
-            physpropSpec.value.remarks = response.data.remarks;
-        } catch (error) {
-            addToast(error.message, 'error');
-        } finally {
-            stopLoading();
-        }
-    }
-});
-
-const productLotSelect = (selected) => {
-    physpropValue.value.productCode = selected?.code ?? '';
-    physpropValue.value.productName = selected?.name ?? '';
-    if (selected?.lot) {
-        physpropSpecGet();
-    }
+const productLotChange = ({ lot, code, name }) => {
+    physpropValue.value.productCode = code ?? '';
+    physpropValue.value.productName = name ?? '';
+    propertyItems.items.value = [];
+    if (lot) physpropSpecGet();
 };
 
 const physpropSpecGet = async () => {
-    const productCode = physpropValue.value.productCode.slice(0, 9);
-    const customerCode = physpropValue.value.customerCode;
+    const { productCode, customerCode } = physpropValue.value;
 
     try {
-        startLoading();
-        const response = await api.get(`/api/physprop/specs/${productCode}/${customerCode ?? ''}`);
-        const physpropSpec = response.data;
-        for (const spec of physpropSpec.specs) {
-            const propertyItem = {};
-            propertyItem.propertyCode = spec.propertyCode;
-            propertyItem.propertyName = spec.propertyName;
-            propertyItem.measuredDate = null;
-            propertyItem.measurerCode = null;
-            propertyItem.measurerName = null;
-            propertyItem.specLowerValue = null;
-            propertyItem.specUpperValue = null;
-            propertyItem.uom = spec.uom;
-            propertyItem.numberSize = spec.numberSize;
-            propertyItem.isTrancate = spec.isTrancate;
-            propertyItem.propertyValues = Array.from(
-                Array(spec.numberSize), () => {
-                    return {
-                        value: null,
-                        score: null,
-                    }
+        const response = await api.get(`/api/physprop/specs/${productCode.slice(0, 9)}/${customerCode ?? ''}`);
+        const { specs } = response.data;
+        for (const spec of specs) {
+            if (spec.isActive) {
+                const propertyItem = {};
+                propertyItem.propertyCode = spec.propertyCode;
+                propertyItem.propertyName = spec.propertyName;
+                propertyItem.measuredDate = null;
+                propertyItem.measurerCode = null;
+                propertyItem.measurerName = null;
+                propertyItem.specLowerValue = null;
+                propertyItem.specUpperValue = null;
+                if (spec.values[1] && !spec.values[2]) {
+                    propertyItem.specLowerValue = spec.values[1];
                 }
-            );
-            propertyItem.meanValue = null;
-            propertyItem.score = null;
-            if (spec.values[1] && !spec.values[2]) {
-                propertyItem.specLowerValue = spec.values[1];
+                if (!spec.values[1] && spec.values[2]) {
+                    propertyItem.specUpperValue = spec.values[2];
+                }
+                if (spec.values[1] && spec.values[2]) {
+                    propertyItem.specLowerValue = spec.values[1];
+                    propertyItem.specUpperValue = spec.values[2];
+                }
+                if (spec.values[3] && spec.values[4]) {
+                    propertyItem.specLowerValue = Decimal(spec.values[3]).sub(spec.values[4]).toNumber();
+                    propertyItem.specUpperValue = Decimal(spec.values[3]).add(spec.values[4]).toNumber();
+                }
+                propertyItem.propertyValues = Array.from(
+                    Array(spec.numberSize), () => {
+                        return {
+                            value: null,
+                            score: null,
+                        }
+                    }
+                );
+                propertyItem.uom = spec.uom;
+                propertyItem.numberSize = spec.numberSize;
+                propertyItem.decimalScale = spec.decimalScale;
+                propertyItem.isTrancate = spec.isTrancate;
+                propertyItem.mean = null;
+                propertyItem.score = null;
+                propertyItems.add(propertyItem);
             }
-            if (!spec.values[1] && spec.values[2]) {
-                propertyItem.specUpperValue = spec.values[2];
-            }
-            if (spec.values[1] && spec.values[2]) {
-                propertyItem.specLowerValue = spec.values[1];
-                propertyItem.specUpperValue = spec.values[2];
-            }
-            if (spec.values[3] && spec.values[4]) {
-                propertyItem.specLowerValue = Decimal(spec.values[3]).sub(spec.values[4]).toNumber();
-                propertyItem.specUpperValue = Decimal(spec.values[3]).add(spec.values[4]).toNumber();
-            }
-            propertyItems.add(propertyItem);
         }
     } catch (error) {
-        addToast(error.message, 'error');
-    } finally {
-        stopLoading();
+        console.error(error);
     }
 };
 
-const measurerIdSelect = (index, selected) => {
-    propertyItems.items.value[index].measurerName = selected?.name ?? '';
+const customerCodeChange = ({ name }) => {
+    physpropValue.value.customerName = name ?? '';
 };
 
-const productCodeSelect = (selected) => {
-    physpropSpec.value.productName = selected?.productName ?? '';
-};
-
-const customerCodeSelect = (selected) => {
-    physpropSpec.value.customerName = selected?.customerName ?? '';
-};
-
-const propertyCodeSelect = (index, selected) => {
-    physpropSpec.value.specs[index].propertyName = selected?.name ?? '';
-    physpropSpec.value.specs[index].propertyName = (selected?.name ?? '') + (selected?.adherendName ?? '');
-    physpropSpec.value.specs[index].uom = selected?.uom ?? '';
-    physpropSpec.value.specs[index].numberSize = selected?.numberSize ?? 0;
-};
+const selectedIndex = ref(null);
 
 const selectedItem = computed(() => {
-    if (selectedItemIndex.value !== null) {
-        return physpropValue.value.propertyItems[selectedItemIndex.value];
-    }
-    return null;
+    return physpropValue.value.propertyItems[selectedIndex.value] || [];
 });
 
-const selectedItemPropertyValues = computed(() => {
-    if (selectedItemIndex.value !== null) {
-        return selectedItem.value.propertyValues;
-    }
-    return [];
+const measurerCodeChange = ({ name }) => {
+    selectedItem.value.measurerName = name ?? '';
+};
+
+const propertyValues = computed(() => {
+    return selectedItem.value.propertyValues || [];
 });
+
+const propertyValuesCheck = (propertyItem) => {
+    const scores = propertyItem.propertyValues.map(item => item.score);
+    return !scores.every(Boolean);
+};
 
 const propertyValuesLowerValue = computed(() => {
-    if (selectedItemIndex.value !== null) {
-        const propertyValues = selectedItemPropertyValues.value.filter(item => item.value).map(item => item.value);
-        if (propertyValues.length) {
-            return Math.min(...propertyValues);
-        }
-    }
-    return null;
+    const values = propertyValues.value
+        .filter(item => item.value)
+        .map(item => item.value);
+    return values.length ? Math.min(...values) : null;
 });
 
 const propertyValuesUpperValue = computed(() => {
-    if (selectedItemIndex.value !== null) {
-        const propertyValues = selectedItemPropertyValues.value.filter(item => item.value).map(item => item.value);
-        if (propertyValues.length) {
-            return Math.max(...propertyValues);
-        }
-    }
-    return null;
+    const values = propertyValues.value
+        .filter(item => item.value)
+        .map(item => item.value);
+    return values.length ? Math.max(...values) : null;
 });
 
+const { page, pageLength } = usePagination(propertyValues, 10);
+const propertyValuesShow = (index) => {
+    const startIndex = (page.value - 1) * 10;
+    const endIndex = startIndex + 10;
+    return index >= startIndex && index < endIndex;
+};
+
 const propertyValueChange = (index) => {
-    if (selectedItemIndex.value !== null) {
-        const propertyValues = selectedItemPropertyValues.value[index].value.trim().split(/ +|\t/);
-        if (propertyValues.length > 1) {
-            for (const n in propertyValues) {
-                if (selectedItemPropertyValues.value[n]) {
-                    selectedItemPropertyValues.value[n].value = propertyValues[n];
-                    propertyValueChange(n);
-                }
+    const values = propertyValues.value[index].value.trim().split(/ +|\t/);
+    if (values.length > 1) {
+        for (const n in values) {
+            if (propertyValues.value[n]) {
+                propertyValues.value[n].value = values[n];
+                propertyValueChange(n);
             }
         }
     }
+
+    const decimalScale = selectedItem.value.decimalScale;
+    const isTrancate = selectedItem.value.isTrancate;
+    const roundMode = (isTrancate) ? Decimal.ROUND_DOWN : Decimal.ROUND_HALF_UP;
+    let value = propertyValues.value[index].value;
+    if (value !== '') {
+        value = Decimal(value).toDecimalPlaces(decimalScale, roundMode).toNumber();
+    }
+    propertyValues.value[index].value = value;
+    propertyValues.value[index].score = calculationScore(value);
+    calculationMean();
 };
 
-const validate = () => {
-    let isValid = true;
-
-    errorMessage.value.productCode = '';
-    if (!physpropSpec.value.productCode) {
-        errorMessage.value.productCode = '品名コードを入力してください。';
-        isValid = false;
+const calculationMean = () => {
+    const decimalScale = selectedItem.value.decimalScale;
+    const isTrancate = selectedItem.value.isTrancate;
+    const roundMode = (isTrancate) ? Decimal.ROUND_DOWN : Decimal.ROUND_HALF_UP;
+    const values = propertyValues.value.filter(item => item.value).map(item => item.value);
+    const total = values.reduce((sum, num) => Decimal(sum).add(num).toNumber(), 0);
+    let mean = Decimal(total).div(values.length).toNumber().toFixed(4);
+    if (!isNaN(mean)) {
+        selectedItem.value.mean = Decimal(mean).toDecimalPlaces(decimalScale, roundMode).toNumber();
+        selectedItem.value.score = calculationScore(mean);
+    } else {
+        selectedItem.value.mean = null;
+        selectedItem.value.score = null;
     }
-
-    return isValid;
 };
 
-const save = async () => {
-    if (!validate() || isError.value) {
-        addToast('入力内容に誤りがあります。', 'error');
-        return;
-    }
+const calculationScore = (value) => {
+    let score = null;
+    const specLowerValue = selectedItem.value.specLowerValue;
+    const specUpperValue = selectedItem.value.specUpperValue;
 
-    try {
-        startLoading();
-        if (productCode) {
-            await execute(async () => {
-                await api.put(`/api/physprop/specs/${productCode}/${customerCode ?? ''}`, physpropSpec.value);
-            });
-            addToast('保存しました。', 'success');
-        } else {
-            await execute(async () => {
-                await api.post(`/api/physprop/specs`, physpropSpec.value);
-            });
-            addToast('保存しました。', 'success');
-            physpropSpec.value = physpropSpecRestore();
+    if (value !== '' && !isNaN(value)) {
+        if (specLowerValue && !specUpperValue) {
+            score = (value >= specLowerValue) ? true : false;
         }
-    } catch (error) {
-        addToast(error.message, 'error');
-    } finally {
-        stopLoading();
+        if (!specLowerValue && specUpperValue) {
+            score = (value <= specUpperValue) ? true : false;
+        }
+        if (specLowerValue && specUpperValue) {
+            score = (value >= specLowerValue && value <= specUpperValue) ? true : false;
+        }
     }
-};
 
-const cancel = () => {
-    const { routeQuery } = window.history.state || {};
-    router.push({
-        name: 'PhyspropSpecList',
-        query: routeQuery,
-    });
+    return score;
 };
 </script>
