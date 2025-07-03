@@ -15,6 +15,10 @@ const router = createRouter({
 router.beforeEach(async (to, from, next) => {
     const { isAuth, authAutoLogin } = useAuth();
 
+    // if (to.path === '/error') {
+    //     return next();
+    // }
+
     if (!isAuth.value) {
         try {
             await authAutoLogin();
@@ -22,6 +26,11 @@ router.beforeEach(async (to, from, next) => {
             return next('/auth/error');
         }
     }
+
+    // if (!isAuth.value && to.meta.requiresAuth) {
+    //     sessionStorage.setItem('redirectTo', to.fullPath);
+    //     return next('/error');
+    // }
 
     next();
 });
