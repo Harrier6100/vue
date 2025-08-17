@@ -76,8 +76,11 @@ const props = defineProps({
 });
 const emit = defineEmits(['close']);
 
+const { role, permissions } = useUser();
+
 const menuList = ref([]);
 const isForwardMenu = ref(false);
+const menuItemClass = 'list-group-item list-group-item-action list-group-item-light rounded-0';
 
 watch(() => props.isOpen, (value) => {
     if (!value) {
@@ -90,44 +93,45 @@ const currentMenu = computed(() => {
 });
 
 const filteredMenu = computed(() => {
-    const { role, permissions } = useUser();
     const menus = routeMenus[currentMenu.value] || [];
 
     return menus.filter(menu => {
-        if (menu.to) {
-            return (
-                menu.showInMenu &&
-                (((menu.roles?.length || 0) === 0 || menu.roles?.includes(role.value)) ||
-                ((menu.permissions?.length || 0) === 0 || menu.permissions?.some(permission => permissions.value.includes(permission))))
-            );
-        }
+        if (menu.to) return hasAccess(menu);
 
         if (menu.subMenu) {
-            const subMenus = routeMenus[menu.subMenu] || [];
-            const hasSubMenu = subMenus.some(subMenu => {
-                return (
-                    subMenu.showInMenu &&
-                    (((subMenu.roles?.length || 0) === 0 || subMenu.roles?.includes(role.value)) ||
-                    ((subMenu.permissions?.length || 0) === 0 || subMenu.permissions?.some(permission => permissions.value.includes(permission))))
-                );
-            });
-            return hasSubMenu;
+            const subMenu = routeMenus[menu.subMenu] || [];
+            return subMenu.some(hasAccess);
         }
 
         return true;
+
+        // if (menu.to) {
+        //     return (
+        //         menu.showInMenu &&
+        //         (((menu.roles?.length || 0) === 0 || menu.roles?.includes(role.value)) ||
+        //         ((menu.permissions?.length || 0) === 0 || menu.permissions?.some(permission => permissions.value.includes(permission))))
+        //     );
+        // }
+
+        // if (menu.subMenu) {
+        //     const subMenus = routeMenus[menu.subMenu] || [];
+        //     const hasSubMenu = subMenus.some(subMenu => {
+        //         return (
+        //             subMenu.showInMenu &&
+        //             (((subMenu.roles?.length || 0) === 0 || subMenu.roles?.includes(role.value)) ||
+        //             ((subMenu.permissions?.length || 0) === 0 || subMenu.permissions?.some(permission => permissions.value.includes(permission))))
+        //         );
+        //     });
+        //     return hasSubMenu;
+        // }
+
+        // return true;
     });
 });
 
 const transitionName = computed(() => {
     return isForwardMenu.value ? 'slide-forward' : 'slide-back';
 });
-
-const menuItemClass = computed(() => [
-    'list-group-item',
-    'list-group-item-action',
-    'list-group-item-light',
-    'rounded-0',
-]);
 
 const pushMenu = (menu) => {
     menuList.value.push(menu);
@@ -137,6 +141,13 @@ const pushMenu = (menu) => {
 const popMenu = () => {
     menuList.value.pop();
     isForwardMenu.value = false;
+};
+
+const hasAccess = (menu) => {
+    if (!menu.showInMenu) return false;
+    if (menu.roles?.length && !menu.roles.includes(role.value)) return false;
+    if (menu.permissions?.length && !menu.permissions.some(permission => permissions.value.includes(permission))) return false;
+    return true;
 };
 </script>
 
